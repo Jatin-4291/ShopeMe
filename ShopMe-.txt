@@ -1,0 +1,4 @@
+ShopMe-
+Schema-users,products,oders,reviews
+hY472t12eYDYoS9C mongoDb compass password
+mongodb+srv://jatindua2003:<password>@cluster0.g3yb3k4.mongodb.net/ -connection string
