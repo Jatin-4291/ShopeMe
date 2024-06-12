@@ -3,6 +3,8 @@
 import { useProduct } from "../contexts/productContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
+axios.defaults.withCredentials = true;
+
 function Products() {
   const { searchProduct } = useProduct();
   const [products, setProducts] = useState([]);

@@ -4,7 +4,7 @@ import isEmail from "validator/lib/isEmail";
 import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
-
+axios.defaults.withCredentials = true;
 function LoginPage() {
   const [formData, setFormData] = useState({
     email: "test5@gmail.com",

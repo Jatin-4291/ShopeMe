@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+axios.defaults.withCredentials = true;
 
 function SignUpPage() {
   const [error, setError] = useState(null);
