@@ -35,7 +35,7 @@ function LoginPage() {
 
     try {
       const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/users/login",
+        "https://shope-me.vercel.app/api/v1/users/login",
         isEmail(email) ? { email, password } : { mobileNumber: email, password }
       );
 
