@@ -13,7 +13,7 @@ function Products() {
     const fetchProductByName = async () => {
       try {
         const response = await axios.get(
-          `https://shope-me.vercel.app/v1/product/search/${encodeURIComponent(
+          `https://shope-me.vercel.app/api/v1/product/search/${encodeURIComponent(
             searchProduct
           )}`
         );
