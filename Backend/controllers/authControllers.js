@@ -60,7 +60,7 @@ export const protect = catchAsync(async (req, res, next) => {
   }
   if (!token) {
     return next(
-      new AppError("You are not  logged in please login to get toekn!! ", 401)
+      new AppError("You are not  logged in please login to get token!! ", 401)
     );
   }
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_CODE);
