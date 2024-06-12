@@ -3,8 +3,6 @@
 import { useProduct } from "../contexts/productContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
-axios.defaults.withCredentials = true;
-
 function Products() {
   const { searchProduct } = useProduct();
   const [products, setProducts] = useState([]);
@@ -13,7 +11,7 @@ function Products() {
     const fetchProductByName = async () => {
       try {
         const response = await axios.get(
-          `https://shope-me.vercel.app/api/v1/product/search/${encodeURIComponent(
+          `http://127.0.0.1:8000/api/v1/product/search/${encodeURIComponent(
             searchProduct
           )}`
         );

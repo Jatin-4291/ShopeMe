@@ -6,13 +6,7 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
-app.use(
-  cors({
-    origin: ["https://shope-me-aloj.vercel.app"],
-    methods: ["POST", "GET", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {

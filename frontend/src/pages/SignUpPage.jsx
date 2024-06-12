@@ -2,7 +2,6 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-axios.defaults.withCredentials = true;
 
 function SignUpPage() {
   const [error, setError] = useState(null);
@@ -34,7 +33,7 @@ function SignUpPage() {
 
     try {
       const { data } = await axios.post(
-        "https://shope-me.vercel.app/api/v1/users/signup",
+        "http://127.0.0.1:8000/api/v1/users/signup",
         {
           firstName,
           lastName,

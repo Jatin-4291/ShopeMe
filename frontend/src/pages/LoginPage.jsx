@@ -4,7 +4,7 @@ import isEmail from "validator/lib/isEmail";
 import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
-axios.defaults.withCredentials = true;
+
 function LoginPage() {
   const [formData, setFormData] = useState({
     email: "test5@gmail.com",
@@ -35,7 +35,7 @@ function LoginPage() {
 
     try {
       const { data } = await axios.post(
-        "https://shope-me.vercel.app/api/v1/users/login",
+        "http://127.0.0.1:8000/api/v1/users/login",
         isEmail(email) ? { email, password } : { mobileNumber: email, password }
       );
 
