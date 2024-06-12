@@ -8,7 +8,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 const app = express();
 app.use(
   cors({
-    origin: ["https://shope-me-aloj.vercel.app/"],
+    origin: ["https://shope-me-aloj.vercel.app"],
     methods: ["POST", "GET", "PATCH", "DELETE"],
     credentials: true,
   })
