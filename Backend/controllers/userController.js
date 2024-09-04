@@ -13,29 +13,13 @@ export const getAllUsers = getAll(User);
 export const getOneUser = getOne(User);
 export const deleteOneUser = deleteOne(User);
 export const updateUser = updateOne(User);
-export const createUser = catchAsync(async (req, res, next) => {
-  if (req.body.roles === "admin")
-    return next(
-      new AppError("You do not have permission to signup as a moderator", 401)
-    );
-
-  if (!req.body.password) {
-    req.body.password = req.body.passwordConfirm =
-      req.body.mobileNumber.toString();
-  }
-
-  const newUser = await User.create(req.body);
-  res.status(201).json({
-    status: "success",
-    data: {
-      user: newUser,
-    },
-  });
-});
 export const getProductCatalogue = catchAsync(async (req, res, next) => {
   console.log(req.user.id);
   const products = await Product.find({
     seller: req.user.id,
+  }).populate({
+    path: "category",
+    select: ["_id", "name"],
   });
   res.status(201).json({
     status: "success",

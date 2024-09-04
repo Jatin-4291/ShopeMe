@@ -7,9 +7,18 @@ function CheckAuth() {
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+
   if (isAuthenticated && user.roles === "customer") {
     console.log(isAuthenticated, user.roles);
     return <Navigate to="/user" />;
+  }
+  if (isAuthenticated && user.roles === "admin") {
+    console.log(isAuthenticated, user.roles);
+    return <Navigate to="/admin" />;
+  }
+  if (isAuthenticated && user.roles === "seller") {
+    console.log(isAuthenticated, user.roles);
+    return <Navigate to="/seller" />;
   }
 }
 

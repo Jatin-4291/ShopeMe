@@ -11,7 +11,9 @@ function RequireAuth({ allowedRoles }) {
       setIsAuthenticated(true);
       setUser(userData);
     }
-  }, []);
+  }, [setIsAuthenticated, setUser]);
+  console.log(user, isAuthenticated);
+
   if (isAuthenticated && allowedRoles.includes(user?.roles)) {
     return <Outlet />;
   }

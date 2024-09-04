@@ -1,6 +1,8 @@
 import validator from "validator";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+
 const userSchema = mongoose.Schema({
   firstName: {
     type: String,
@@ -20,8 +22,36 @@ const userSchema = mongoose.Schema({
     type: String,
   },
   address: {
-    type: String,
-    required: [true, "A user must have a address"],
+    type: {
+      hNo: {
+        type: String,
+        required: [true, "A user must have a house number"],
+      },
+      street: {
+        type: String,
+        required: [true, "A user must have a street"],
+      },
+      area: {
+        type: String,
+        required: [true, "A user must have an area"],
+      },
+      district: {
+        type: String,
+        required: [true, "A user must have a district"],
+      },
+      state: {
+        type: String,
+        required: [true, "A user must have a state"],
+      },
+      country: {
+        type: String,
+        required: [true, "A user must have a country"],
+      },
+      landmark: {
+        type: String,
+      },
+    },
+    required: false,
   },
   password: {
     type: String,
@@ -55,7 +85,7 @@ const userSchema = mongoose.Schema({
     type: Date,
   },
   passwordResetToken: String,
-  passwordResetExpire: Date,
+  passwordResetExpires: Date,
   active: {
     type: Boolean,
     default: true,
@@ -96,6 +126,20 @@ userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
     return changedTimeStamp > JWTTimeStamp;
   }
   return false;
+};
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  console.log({ resetToken }, this.passwordResetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model("User", userSchema);

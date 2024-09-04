@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import iPhone13Data from "../../assets/productPageDetails";
 import { FaLocationDot } from "react-icons/fa6";
-
-function ProductsInfo() {
+import axios from "axios";
+function ProductsInfo({ productId }) {
   const [postcode, setPostalCode] = useState(""); // Postal code state
   const [isValidPincode, setIsValidPincode] = useState();
-
+  const [product, setProduct] = useState({});
+  const [error, setError] = useState("");
+  useEffect(() => {
+    const getProductById = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/v1/product/${productId}`
+        );
+        const data = response.data.data.doc;
+        setProduct(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+    getProductById();
+  }, [productId]);
   const handlePostalCodeChange = (event) => {
     setPostalCode(event.target.value);
   };
@@ -19,16 +34,9 @@ function ProductsInfo() {
 
   return (
     <div className="w-1/2 flex flex-col m-5">
-      <h1 className="text-3xl ">{iPhone13Data.name}</h1>
+      <h1 className="text-3xl ">{product.name}</h1>
       <br />
-      <div className="flex">
-        <div className="bg-green-700 w-6 text-white">{iPhone13Data.rating}</div>
-        <h4 className="text-gray-600">
-          {iPhone13Data.num_ratings} rating & {iPhone13Data.reviews} reviews
-        </h4>
-      </div>
-      <br />
-      <div className="text-3xl">${iPhone13Data.price}</div>
+      <div className="text-3xl">&#8377;{product.price}</div>
       <br />
       <div className="flex gap-10">
         <p>Delivery </p>
@@ -54,7 +62,7 @@ function ProductsInfo() {
         </div>
       )}
       <br />
-      <div className="">{iPhone13Data.description}</div>
+      <div className="">{product.description}</div>
     </div>
   );
 }

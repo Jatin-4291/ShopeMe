@@ -26,9 +26,6 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 export const signUp = catchAsync(async (req, res, next) => {
-  if (req.body.roles === "admin") {
-    return next(new AppError("you cannot login as admin", 400));
-  }
   const newUser = await User.create(req.body);
   createSendToken(newUser, 201, res);
 });
@@ -107,10 +104,9 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   console.log(resetToken);
   await user.save({ validateBeforeSave: false });
   // send it back as an emial
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}}`;
-  const message = `Forgot your Password?submit a patchh request with your new password and password confirm to :${resetURL}.\n if tou didint foeget you password please ignore this email`;
+  const resetURL = `http://localhost:5173/resetpassword/${resetToken}`;
+  console.log(resetURL);
+  const message = `Forgot your Password?click on this:${resetURL}.\n if you didn't forget your password please ignore this email`;
 
   try {
     await sendEmail({
@@ -143,7 +139,8 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  const user = User.findOne({
+  console.log("hashedToken:", hashedToken);
+  const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });

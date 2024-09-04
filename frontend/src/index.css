@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply font-sans;
+}
 .scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.hidden {
   display: none;
 }

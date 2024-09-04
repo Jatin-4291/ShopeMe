@@ -11,9 +11,8 @@ function LoginPage() {
     password: "jatin1234",
   });
   const [error, setError] = useState("");
-  const { setIsAuthenticated, setUser } = useUser();
+  const { setIsAuthenticated, setUser, user } = useUser();
   const navigate = useNavigate();
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -47,6 +46,8 @@ function LoginPage() {
       // Set user data
       setUser(data.data.user);
       // Redirect the user to a secure route
+      console.log("click");
+
       navigate("/redirect");
     } catch (error) {
       // Check if error has a response and parse the error message
@@ -59,15 +60,18 @@ function LoginPage() {
   return (
     <>
       <div className="flex mt-2 h-3/5">
-        <div className="w-1/2 bg-blue-500 h-screen flex flex-col justify-center items-center text-white">
-          <h3 className="text-2xl">Nice to see you again...</h3>
+        <div className="w-1/2 bg-violet-900 h-screen flex flex-col justify-center items-center text-white">
+          <h1 className="text-5xl font-bold">
+            Apni <span className=" text-yellow-400">Dukan</span>
+          </h1>
           <br />
-          <h1 className="text-5xl font-bold">WELCOME BACK</h1>
+
+          <h3 className="text-2xl">All Things AnyWhere Anytime Time</h3>
         </div>
         <div className="w-1/2 h-4/5 flex flex-col justify-center items-center">
           <form className="w-full h-screen" onSubmit={handleSubmit}>
             <div className="w-full h-screen flex flex-col justify-center items-center">
-              <h1 className="text-2xl m-5 text-blue-500 font-bold">
+              <h1 className="text-2xl m-5 text-violet-900 font-bold">
                 Login Account
               </h1>
               <input
@@ -86,11 +90,11 @@ function LoginPage() {
                 onChange={handleChange}
                 placeholder="Enter Password"
               />
-              <div className="w-1/2 text-blue-500 text-xs flex justify-between">
+              <div className="w-1/2 text-violet-900 text-xs flex justify-between">
                 <Link to="/signup">Signup</Link>
-                <p>Forgot password</p>
+                <Link to="/forgotPassward">ForgotPassWord</Link>
               </div>
-              <button className="w-1/3 h-10 m-4 bg-blue-500 font-bold text-xl text-center text-white rounded-md">
+              <button className="w-1/3 h-10 m-4 bg-violet-900 font-bold text-xl text-center text-white rounded-md">
                 Login
               </button>
             </div>

@@ -1,52 +1,60 @@
 import mongoose from "mongoose";
 
+// Define the schema for Order
 const orderSchema = mongoose.Schema({
-  placedBy: {
-    type: String,
-    required: [true, "A order must be placed by a person"],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true, // Make sure the user ID is required
   },
-  contactNo: {
-    type: Number,
-    required: [true, "A order must have a contact no."],
+  sellerId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    require: [true, "A order must belong to a seller"],
   },
-  Email: {
+  products: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: [1, "Quantity must be at least 1"],
+      },
+    },
+  ],
+  status: {
     type: String,
-  },
-  address: {
-    type: String,
-    required: [true, "A order must have a delivery Adress"],
+    required: [true, "The status of the order must be defined"],
+    default: "Placed",
+    enum: ["Placed", "Dispatched", "Delivered", "Cancelled"],
   },
   placedDate: {
     type: Date,
-    default: Date.now,
+    default: Date.now, // Default to current date and time
   },
-  reciveDate: {
+  dispatchedDate: {
     type: Date,
-    default: Date.now,
   },
-  pincode: {
+  deliveredDate: {
+    type: Date,
+  },
+  totalAmount: {
     type: Number,
+    required: true,
+    min: [0, "Total amount must be a positive number"],
   },
-  userID: {
+  paymentStatus: {
     type: String,
-  },
-  productID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-    },
-  ],
-  roles: {
-    type: String,
-    required: [true, "The role of the user must be defined"],
-    default: "customer",
-    enum: ["customer", "seller", "admin"],
-  },
-  dispatched: {
-    type: Boolean,
-    default: false,
+    enum: ["Pending", "Completed", "Failed"],
+    default: "Pending",
   },
 });
+
+// Create the Order model
 const Order = mongoose.model("Order", orderSchema);
 
 export default Order;

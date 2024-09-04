@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function SignUpPage() {
   const [error, setError] = useState(null);
@@ -11,14 +12,16 @@ function SignUpPage() {
     lastName: "",
     email: "",
     mobileNumber: "",
-    address: "",
     password: "",
     passwordConfirm: "",
   });
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const {
@@ -26,7 +29,6 @@ function SignUpPage() {
       lastName,
       email,
       mobileNumber,
-      address,
       password,
       passwordConfirm,
     } = formData;
@@ -39,7 +41,6 @@ function SignUpPage() {
           lastName,
           email,
           mobileNumber,
-          address,
           password,
           passwordConfirm,
         }
@@ -64,83 +65,101 @@ function SignUpPage() {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
   return (
     <>
-      <div>
-        <Navbar />
-        <div className="flex justify-center items-center h-screen bg-blue-500 mt-2">
-          <div className="w-4/5 md:w-1/2 lg:w-1/3 bg-white rounded-lg p-6">
-            <h1 className="text-3xl mb-4 text-center">Sign Up</h1>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  value={formData.firstName}
-                  name="firstName"
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                />
-                <input
-                  type="text"
-                  value={formData.lastName}
-                  name="lastName"
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                />
-              </div>
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-violet-500 to-violet-900">
+        <div className="w-11/12 md:w-3/4 lg:w-1/2 bg-white rounded-lg p-8 shadow-lg transform transition-all hover:scale-105">
+          <h1 className="text-4xl mb-6 text-center text-violet-900 font-bold">
+            Sign Up
+          </h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className="flex flex-col md:flex-row gap-4">
               <input
-                type="email"
-                value={formData.email}
-                name="email"
+                type="text"
+                value={formData.firstName}
+                name="firstName"
                 onChange={handleChange}
-                placeholder="Email Address"
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              />
-              <input
-                type="Number"
-                value={formData.mobileNumber}
-                name="mobileNumber"
-                onChange={handleChange}
-                placeholder="Mobile No."
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                placeholder="First Name"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
               />
               <input
                 type="text"
-                value={formData.address}
-                name="address"
+                value={formData.lastName}
+                name="lastName"
                 onChange={handleChange}
-                placeholder="Address"
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                placeholder="Last Name"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
               />
-              <div className="flex gap-4">
+            </div>
+            <input
+              type="email"
+              value={formData.email}
+              name="email"
+              onChange={handleChange}
+              placeholder="Email Address"
+              className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
+            />
+            <input
+              type="number"
+              value={formData.mobileNumber}
+              name="mobileNumber"
+              onChange={handleChange}
+              placeholder="Mobile No."
+              className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
+            />
+
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
                 <input
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   value={formData.password}
                   name="password"
                   onChange={handleChange}
                   placeholder="Password"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+                >
+                  {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+              <div className="relative flex-1">
                 <input
-                  type="password"
+                  type={confirmPasswordVisible ? "text" : "password"}
                   value={formData.passwordConfirm}
                   name="passwordConfirm"
                   onChange={handleChange}
                   placeholder="Password Confirm"
-                  className="flex-1  px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
                 />
+                <button
+                  type="button"
+                  onClick={toggleConfirmPasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+                >
+                  {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
-              <button
-                to="/login"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md text-center hover:bg-blue-600 transition duration-300"
-              >
-                Sign Up
-              </button>
-              {error && <p className="text-red-600">{error}</p>}
-            </form>
-          </div>
+            </div>
+            <button
+              type="submit"
+              className="bg-violet-700 text-white px-4 py-3 rounded-md text-center hover:bg-violet-800 transition duration-300"
+            >
+              Sign Up
+            </button>
+            {error && <p className="text-red-600">{error}</p>}
+          </form>
         </div>
       </div>
     </>

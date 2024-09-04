@@ -5,9 +5,8 @@ function ProductList() {
   return (
     <>
       <Navbar />
-      <div className="flex bg-gray-100">
-        <Filters className="w-1/3" />
-        <Products className="flex-grow" />
+      <div className="flex w-full">
+        <Products className="flex justify-center w-4/5" />
       </div>
     </>
   );
