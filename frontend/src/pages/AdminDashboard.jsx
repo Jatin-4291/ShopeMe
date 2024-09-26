@@ -1,8 +1,9 @@
 import { useState } from "react";
-import SellerProducts from "../components/SellerDashBoard/SellerProducts";
 import AdminOverview from "../components/AdminDashboard/AdminOverview";
-import OrdersForSeller from "../components/SellerDashBoard/OrdersForSeller";
 import AdminOrders from "../components/AdminDashboard/AdminOrders";
+import AdminUsers from "../components/AdminDashboard/AdminUsers";
+import AdminPaySellers from "../components/AdminDashboard/AdminPaySellers/AdminPaySellers";
+import OffersAndCategories from "../components/AdminDashboard/Offers And Categories/OffersAndCategories";
 function AdminDashboard() {
   // State to track the current view
   const [currentView, setCurrentView] = useState("overview");
@@ -43,20 +44,29 @@ function AdminDashboard() {
             </li>
             <li>
               <button
-                onClick={() => handleViewChange("products")}
+                onClick={() => handleViewChange("users")}
                 className="block px-4 py-2 text-lg hover:bg-violet-700 rounded"
               >
-                Products
+                Users
               </button>
             </li>
             <li>
               <button
-                onClick={() => handleViewChange("analytics")}
+                onClick={() => handleViewChange("paysellers")}
                 className="block px-4 py-2 text-lg hover:bg-violet-700 rounded"
               >
-                Analytics
+                Pay Sellers
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => handleViewChange("offersandcategories")}
+                className="block px-4 py-2 text-lg hover:bg-violet-700 rounded"
+              >
+                Offers And Categories
+              </button>
+            </li>
+
             <li>
               <button
                 onClick={() => handleViewChange("settings")}
@@ -73,8 +83,9 @@ function AdminDashboard() {
       <div className="w-4/5 bg-gray-100">
         {currentView === "overview" && <AdminOverview />}
         {currentView === "orders" && <AdminOrders />}
-        {currentView === "products"}
-        {currentView === "analytics"}
+        {currentView === "users" && <AdminUsers />}
+        {currentView === "paysellers" && <AdminPaySellers />}
+        {currentView === "offersandcategories" && <OffersAndCategories />}
         {currentView === "settings"}
       </div>
     </div>

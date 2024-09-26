@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import Order from "../Models/ordersModels.js";
 import User from "../Models/userModels.js";
 import Product from "../Models/productModels.js";
-
+import catchAsync from "../utils/catchAsync.js";
+import Board from "../Models/boardsModel.js";
+import { getAll } from "./handlerFactory.js";
 export const getDashboardStats = async (req, res) => {
   try {
     // Aggregation pipeline for Orders collection
@@ -205,3 +207,176 @@ export const getDashboardStats = async (req, res) => {
     });
   }
 };
+
+export const getSellerMonthlyReport = async (req, res) => {
+  const { page = 1, limit = 8, search = "", sort = "highest" } = req.query; // Default to page 1, limit 8, no search, and highest sort
+  const skip = (page - 1) * limit;
+
+  try {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const nextMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const sellersOrdersData = await Order.aggregate([
+      {
+        $match: {
+          placedDate: {
+            $gte: monthStart,
+            $lt: nextMonthStart,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$sellerId",
+          totalAmount: { $sum: "$totalAmount" },
+          orderCount: { $sum: 1 },
+          orders: {
+            $push: {
+              _id: "$_id",
+              products: "$products",
+              totalAmount: "$totalAmount",
+              status: "$status",
+              placedDate: "$placedDate",
+              paymentStatus: "$paymentStatus",
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "seller",
+        },
+      },
+      {
+        $unwind: "$seller",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "orders.products.productId",
+          foreignField: "_id",
+          as: "orderProducts",
+        },
+      },
+      {
+        $project: {
+          sellerName: {
+            $concat: ["$seller.firstName", " ", "$seller.lastName"],
+          },
+          email: "$seller.email",
+          mobileNumber: "$seller.mobileNumber",
+          totalAmount: 1,
+          orderCount: 1,
+          orders: {
+            $map: {
+              input: "$orders",
+              as: "order",
+              in: {
+                _id: "$$order._id",
+                totalAmount: "$$order.totalAmount",
+                status: "$$order.status",
+                placedDate: "$$order.placedDate",
+                paymentStatus: "$$order.paymentStatus",
+                products: {
+                  $map: {
+                    input: "$$order.products",
+                    as: "product",
+                    in: {
+                      productId: "$$product.productId",
+                      quantity: "$$product.quantity",
+                      details: {
+                        $arrayElemAt: [
+                          {
+                            $filter: {
+                              input: "$orderProducts",
+                              as: "prod",
+                              cond: {
+                                $eq: ["$$prod._id", "$$product.productId"],
+                              },
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      // Search filter for sellerName, email, and mobileNumber
+      {
+        $match: {
+          $or: [
+            { "seller.firstName": { $regex: search, $options: "i" } },
+            { "seller.lastName": { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+            { mobileNumber: { $regex: search, $options: "i" } },
+          ],
+        },
+      },
+      // Sort by totalAmount or orderCount based on the sort parameter
+      {
+        $sort:
+          sort === "highest"
+            ? { totalAmount: -1 }
+            : sort === "lowest"
+            ? { totalAmount: 1 }
+            : sort === "mostOrders"
+            ? { orderCount: -1 }
+            : { orderCount: 1 }, // default to leastOrders
+      },
+    ]);
+
+    const totalSellers = sellersOrdersData.length;
+
+    // Slice the sellers data for the current page
+    const paginatedSellers = sellersOrdersData.slice(skip, skip + limit);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        sellers: paginatedSellers,
+        totalSellers, // Send total count for pagination
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching seller data:", err);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch seller data.",
+    });
+  }
+};
+
+export const createBoard = catchAsync(async (req, res, next) => {
+  const { productId } = req.body;
+
+  // Check if an image file was uploaded
+  if (!req.file) {
+    return res.status(400).json({
+      status: "fail",
+      message: "No image file provided",
+    });
+  }
+
+  // Create a new board entry with the uploaded image URL and productId
+  const newBoard = await Board.create({
+    image: req.file.path, // Cloudinary URL is stored in req.file.path
+    productId,
+  });
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      board: newBoard,
+    },
+  });
+});
+export const getAllBoards = getAll(Board);

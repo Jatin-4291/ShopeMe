@@ -10,12 +10,12 @@ import {
 } from "../controllers/productController.js";
 import { getProductCatalogue } from "../controllers/userController.js";
 import { protect, restrictTo } from "../controllers/authControllers.js";
-import upload from "../config/multerConfig.js";
+import uploadConfig from "../config/multerConfig.js";
 Router.post(
   "/",
   protect,
   restrictTo("seller"),
-  upload.array("images", 10),
+  uploadConfig.uploadProductImages.array("images", 10),
   createProduct
 );
 Router.get("/:id", protect, getProductByID);
@@ -25,7 +25,7 @@ Router.patch(
   "/:id",
   protect,
   restrictTo("seller", "admin"),
-  upload.array("images", 10),
+  uploadConfig.uploadProductImages.array("images", 10),
   updateProduct
 );
 Router.delete("/:id", protect, restrictTo("admin", "seller"), deleteProduct);
