@@ -18,6 +18,7 @@ Router.post(
   uploadConfig.uploadProductImages.array("images", 10),
   createProduct
 );
+Router.get("/getAll", protect, restrictTo("admin"), getAllProduct);
 Router.get("/:id", protect, getProductByID);
 Router.get("/search/:name", protect, getProductByName);
 Router.get("/", protect, restrictTo("seller"), getProductCatalogue);

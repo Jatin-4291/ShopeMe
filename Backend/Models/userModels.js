@@ -65,6 +65,11 @@ const userSchema = mongoose.Schema({
     unique: true,
     length: 10,
   },
+  gstNumber: {
+    type: String,
+    length: 16,
+    unique: true,
+  },
   passwordConfirm: {
     type: String,
     required: [true, `A user must confirm password`],

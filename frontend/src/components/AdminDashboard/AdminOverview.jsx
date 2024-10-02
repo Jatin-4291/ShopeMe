@@ -62,6 +62,9 @@ function AdminOverview() {
   console.log("hello2");
   return (
     <div className="p-3 bg-gray-100">
+      <div className="w-full h-14 shadow-md bg-white m-2 border rounded-lg">
+        <p className="text-xl text-violet-900 font-bold mt-4 ml-4">Overview</p>
+      </div>
       <OverviewNav onSearch={onSearch} />
       <div className="flex gap-10 bg-gray-100">
         <div className="bg-white border rounded-lg w-1/4 h-32">

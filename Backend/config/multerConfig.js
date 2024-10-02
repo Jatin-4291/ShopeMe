@@ -16,6 +16,7 @@ const createStorage = (folder) => {
 const uploadConfig = {
   uploadProductImages: multer({ storage: createStorage("products") }),
   uploadBoardImages: multer({ storage: createStorage("boards") }),
+  uploadCategoryImages: multer({ storage: createStorage("category") }),
 };
 
 export default uploadConfig;

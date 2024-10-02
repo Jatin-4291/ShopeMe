@@ -5,6 +5,7 @@ import {
   getDashboardStats,
   getSellerMonthlyReport,
   createBoard,
+  deleteBoard,
 } from "../controllers/adminDashboard.js";
 import uploadConfig from "../config/multerConfig.js";
 Router.get("/", protect, restrictTo("admin"), getDashboardStats);
@@ -16,5 +17,6 @@ Router.post(
   uploadConfig.uploadBoardImages.single("image"),
   createBoard
 );
+Router.delete("/boards/:id", protect, restrictTo("admin"), deleteBoard);
 
 export default Router;

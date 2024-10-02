@@ -1,15 +1,45 @@
 import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import AccountCreation from "../components/SellerDetails/AccountCreation";
+
 function SellerDetails() {
   const { user } = useUser();
-  const [activeStep, setActiveStep] = useState(1); // Default to step 1
+  const [activeStep, setActiveStep] = useState(2); // Default to step 2
+
+  // Step titles and descriptions
+  const steps = [
+    {
+      title: "Account Creation",
+    },
+    {
+      title: "Seller Details",
+    },
+    {
+      title: "Bank Details",
+    },
+    {
+      title: "Shipping Location",
+    },
+    {
+      title: "Digital Signature",
+    },
+    {
+      title: "Verify and Submit",
+    },
+  ];
+
+  // Function to handle step completion
+  const completeStep = () => {
+    setActiveStep((prevStep) => Math.min(prevStep + 1, steps.length)); // Move to the next step, max to the number of steps
+  };
 
   // Function to determine the background color based on active step
   const getStepClass = (step) => {
-    return step === activeStep
-      ? "bg-violet-900 text-white"
-      : "bg-gray-300 text-gray-700";
+    return step < activeStep
+      ? "bg-violet-900 text-white" // Completed steps
+      : step === activeStep
+      ? "bg-violet-900 text-white" // Active step
+      : "bg-gray-300 text-gray-700"; // Inactive steps
   };
 
   return (
@@ -52,119 +82,43 @@ function SellerDetails() {
 
       {/* Main Content Area */}
       <div className="w-1/5 bg-gray-100 px-4 py-6 relative">
-        <div className="bg-gray-200 text-lg font-bold m-0">
+        <div className="bg-gray-100 text-lg font-bold m-0">
           <p className="mt-4 ml-4 mr-4">
             Complete these steps for easy onboarding
           </p>
         </div>
-        <div className="flex flex-col pl-4">
+        <div className="flex flex-col mt-10">
           <div className="border-l-2 border-gray-300 pl-4">
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  1
-                )}`}
-              >
-                1
+            {steps.map((step, index) => (
+              <div className="flex items-center mb-16" key={index}>
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${getStepClass(
+                    index + 1
+                  )}`}
+                >
+                  {index + 1 < activeStep ? (
+                    <span className="text-white">✓</span> // Tock for completed steps
+                  ) : (
+                    index + 1
+                  )}
+                </div>
+                <div className="ml-4">
+                  <p className="font-bold">{step.title}</p>
+                  <p className="text-sm text-gray-600">{step.description}</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <p className="font-bold">Account Creation</p>
-                <p className="text-sm text-gray-600">Create your account</p>
-              </div>
-            </div>
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  2
-                )}`}
-              >
-                2
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Seller Details</p>
-                <p className="text-sm text-gray-600">
-                  Provide seller information
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  3
-                )}`}
-              >
-                3
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Brand Details</p>
-                <p className="text-sm text-gray-600">Add brand information</p>
-              </div>
-            </div>
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  4
-                )}`}
-              >
-                4
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Bank Details</p>
-                <p className="text-sm text-gray-600">
-                  Enter bank account details
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  5
-                )}`}
-              >
-                5
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Shipping Locations</p>
-                <p className="text-sm text-gray-600">
-                  Specify shipping regions
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center mb-10">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  6
-                )}`}
-              >
-                6
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Digital Signature</p>
-                <p className="text-sm text-gray-600">Upload your signature</p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepClass(
-                  7
-                )}`}
-              >
-                7
-              </div>
-              <div className="ml-4">
-                <p className="font-bold">Verify and Submit</p>
-                <p className="text-sm text-gray-600">
-                  Review and submit your details
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Empty Div for Layout Adjustment */}
+      {/* Main Content Area for Current Step */}
       <div className="w-3/5 bg-gray-50">
-        {activeStep == 1 && <AccountCreation />}
+        {activeStep === 2 && (
+          <AccountCreation onComplete={completeStep} /> // Pass the completeStep function as a prop
+        )}
+        {activeStep === 2 && <div> {/* Content for Step 2 */} </div>}
+        {/* Continue for other steps... */}
       </div>
     </div>
   );

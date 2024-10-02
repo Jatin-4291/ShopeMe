@@ -7,9 +7,42 @@ import {
   getOne,
 } from "./handlerFactory.js";
 import catchAsync from "../utils/catchAsync.js";
-import AppError from "../utils/appError.js";
 
-export const createCategory = createOne(Category);
+export const createCategory = catchAsync(async (req, res, next) => {
+  const { name, parentCategory } = req.body;
+  console.log(name, parentCategory);
+
+  console.log(req.body);
+
+  // Check if an image file was uploaded
+  if (!req.file) {
+    return res.status(400).json({
+      status: "fail",
+      message: "No image file provided",
+    });
+  }
+
+  // Create a new category object with the uploaded image URL, name, and description
+  const categoryData = {
+    image: req.file.path, // Store Cloudinary URL or path
+    name,
+  };
+
+  // If parentCategory is provided, add it to the category data
+  if (parentCategory) {
+    categoryData.parentCategory = parentCategory;
+  }
+
+  // Create the new category in the database
+  const newCategory = await Category.create(categoryData);
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      categories: newCategory,
+    },
+  });
+});
 
 export const updateCategory = updateOne(Category);
 
@@ -50,6 +83,59 @@ export const getCategoriesWithSubcategories = catchAsync(
     });
   }
 );
+export const getParentCategories = async (req, res) => {
+  console.log("hello");
+
+  try {
+    const parents = await Category.find({ parentCategory: null }).exec();
+
+    if (!parents || parents.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No parent categories found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: parents,
+    });
+  } catch (error) {
+    console.error("Error fetching parent categories: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching parent categories",
+      error: error.message,
+    });
+  }
+};
+
+// Get all child categories (categories with a parent)
+export const getChildCategoriesByParent = async (req, res) => {
+  try {
+    const { parentId } = req.params;
+
+    // Fetch child categories of the specified parent category
+    const children = await Category.find({ parentCategory: parentId });
+
+    if (children.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No child categories found for this parent",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: children,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching child categories",
+      error: error.message,
+    });
+  }
+};
 // Get a category by ID
 export const getCategoryById = getOne(Category);
 

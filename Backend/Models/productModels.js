@@ -39,12 +39,12 @@ const productSchema = mongoose.Schema(
       type: String,
       required: [true, "A product must have a brand"],
     },
-    variants: [
-      {
-        variantName: String,
-        variantValue: String,
-      },
-    ],
+    variantType: {
+      type: String,
+    },
+    variantValue: {
+      type: String,
+    },
     stock: {
       type: Number,
       required: [true, "The stock No. must be provided"],

@@ -67,10 +67,10 @@ function Navbar() {
 
   return (
     <nav className="flex items-center justify-between h-16 px-4 white border border-solid shadow-md text-black">
-      <h1 className="text-3xl font-bold">
+      <Link to="/user" className="text-3xl font-bold">
         <span className="text-violet-900">Apni</span>
         <span className="text-yellow-400">Dukan</span>
-      </h1>
+      </Link>
       <form onSubmit={handleSubmit} className="flex">
         <input
           onChange={handleSearchProduct}

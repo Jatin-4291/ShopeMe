@@ -17,6 +17,8 @@ function MyProducts() {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/v1/product/"
         );
+        console.log(response.data.data.products);
+
         setProducts(response.data.data.products);
         setLoading(false);
       } catch (error) {
@@ -223,7 +225,7 @@ function MyProducts() {
                   {product.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.category.name}
+                  {product.category._id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   ${product.price}

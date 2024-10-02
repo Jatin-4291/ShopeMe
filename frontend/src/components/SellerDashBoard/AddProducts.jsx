@@ -97,14 +97,9 @@ function AddProducts() {
     formData.append("price", price);
     formData.append("brand", brand);
 
-    axios
-      .post("http://127.0.0.1:8000/api/v1/products/", formData)
-      .then((response) => {
-        console.log("Product added successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error adding product:", error);
-      });
+    axios.post("http://127.0.0.1:8000/api/v1/products/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   };
 
   return (

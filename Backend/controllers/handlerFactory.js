@@ -23,8 +23,9 @@ export const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runvalidators: true,
+      runValidators: true,
     });
+    console.log(req.body, doc);
 
     if (!doc) {
       return next(new AppError("No document found with the ID", 404));
@@ -36,6 +37,7 @@ export const updateOne = (Model) =>
         data: doc,
       },
     });
+    console.log(doc);
   });
 
 export const createOne = (Model) =>

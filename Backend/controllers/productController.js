@@ -12,7 +12,15 @@ import {
 import cloudinary from "../config/cloudinaryConfig.js";
 
 export const createProduct = catchAsync(async (req, res, next) => {
-  const { name, category, description, price, brand, variants } = req.body;
+  const {
+    name,
+    category,
+    description,
+    price,
+    brand,
+    variantType,
+    variantValue,
+  } = req.body;
   const seller = req.user.id;
 
   const imageUrls = req.files.map((file) => ({
@@ -26,7 +34,8 @@ export const createProduct = catchAsync(async (req, res, next) => {
     description,
     price,
     brand,
-    variants,
+    variantType,
+    variantValue,
     seller,
     images: imageUrls,
   });

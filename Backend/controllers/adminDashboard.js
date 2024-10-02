@@ -4,7 +4,7 @@ import User from "../Models/userModels.js";
 import Product from "../Models/productModels.js";
 import catchAsync from "../utils/catchAsync.js";
 import Board from "../Models/boardsModel.js";
-import { getAll } from "./handlerFactory.js";
+import { deleteOne, getAll } from "./handlerFactory.js";
 export const getDashboardStats = async (req, res) => {
   try {
     // Aggregation pipeline for Orders collection
@@ -357,6 +357,7 @@ export const getSellerMonthlyReport = async (req, res) => {
 
 export const createBoard = catchAsync(async (req, res, next) => {
   const { productId } = req.body;
+  console.log(req.body);
 
   // Check if an image file was uploaded
   if (!req.file) {
@@ -380,3 +381,4 @@ export const createBoard = catchAsync(async (req, res, next) => {
   });
 });
 export const getAllBoards = getAll(Board);
+export const deleteBoard = deleteOne(Board);
