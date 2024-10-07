@@ -6,22 +6,29 @@ export const UserProvider = function ({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isPhoto, setIsPhoto] = useState(false);
+
   useEffect(() => {
     if (user === null) return;
     localStorage.setItem("user", JSON.stringify(user));
   }, [user]);
+
   useEffect(() => {
     if (user !== null) {
       return;
     }
     const userInStorage = localStorage.getItem("user");
-    console.log(userInStorage);
 
-    if (userInStorage !== "null" && userInStorage !== null) {
+    if (
+      userInStorage !== "null" &&
+      userInStorage !== null &&
+      userInStorage !== "false" &&
+      userInStorage
+    ) {
       setUser(JSON.parse(userInStorage));
       setIsAuthenticated(true);
     }
   }, [user]);
+
   return (
     <UserContext.Provider
       value={{

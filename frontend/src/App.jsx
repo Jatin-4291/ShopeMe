@@ -22,6 +22,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<CheckUser />}>
+          <Route index element={<HomePage />} />
+          <Route path="productList" element={<ProductList />} />
+          <Route path="productDetails/:id" element={<ProductDetails />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="forgotpassward" element={<ForgotPassward />} />
