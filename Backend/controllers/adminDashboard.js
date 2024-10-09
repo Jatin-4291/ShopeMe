@@ -380,5 +380,20 @@ export const createBoard = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const getAllunverifiedSellers = catchAsync(async (req, res, next) => {
+  const unverifiedSellers = await User.find({
+    isSellerAprooved: false,
+  });
+
+  res.status(200).json({
+    status: "success",
+    results: unverifiedSellers.length,
+    data: {
+      sellers: unverifiedSellers,
+    },
+  });
+});
+
 export const getAllBoards = getAll(Board);
 export const deleteBoard = deleteOne(Board);

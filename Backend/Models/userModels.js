@@ -2,6 +2,7 @@ import validator from "validator";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import { type } from "os";
 
 const userSchema = mongoose.Schema({
   firstName: {
@@ -46,6 +47,7 @@ const userSchema = mongoose.Schema({
       country: {
         type: String,
         required: [true, "A user must have a country"],
+        default: "India",
       },
       landmark: {
         type: String,
@@ -70,6 +72,32 @@ const userSchema = mongoose.Schema({
     length: 16,
     unique: true,
   },
+  BankDetails: {
+    type: {
+      bankName: {
+        type: String,
+        required: [true, "A bank must have a name"],
+      },
+      accountNumber: {
+        type: String,
+        required: [true, "A bank must have a Account"],
+      },
+      ifscCode: {
+        type: String,
+        required: [true, "A bank holder must have IFSC code"],
+      },
+      accountHolderName: {
+        type: String,
+        required: [true, "A bank holder name is required"],
+      },
+    },
+  },
+  sellerSignature: {
+    type: String,
+  },
+  sellerVerification: {
+    type: String,
+  },
   passwordConfirm: {
     type: String,
     required: [true, `A user must confirm password`],
@@ -88,6 +116,9 @@ const userSchema = mongoose.Schema({
   },
   passwordChangedAt: {
     type: Date,
+  },
+  isSellerAprooved: {
+    Type: Boolean,
   },
   passwordResetToken: String,
   passwordResetExpires: Date,

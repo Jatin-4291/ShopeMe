@@ -1,5 +1,6 @@
 import User from "../Models/userModels.js";
 import catchAsync from "../utils/catchAsync.js";
+import cloudinary from "../config/cloudinaryConfig.js";
 import {
   getAll,
   getOne,
@@ -27,6 +28,51 @@ export const getProductCatalogue = catchAsync(async (req, res, next) => {
       products,
     },
   });
+});
+
+export const addSellerSignature = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+
+  if (!req.file) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Signature file is required",
+    });
+  }
+
+  try {
+    // Upload file to Cloudinary
+    const signature = req.file.path;
+
+    // Update the user with the signature URL
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { sellerSignature: signature },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Seller signature updated successfully",
+      data: {
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
 });
 
 export const getSellerOrders = catchAsync(async (req, res, next) => {

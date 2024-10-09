@@ -17,6 +17,7 @@ const uploadConfig = {
   uploadProductImages: multer({ storage: createStorage("products") }),
   uploadBoardImages: multer({ storage: createStorage("boards") }),
   uploadCategoryImages: multer({ storage: createStorage("category") }),
+  uploadSignature: multer({ storage: createStorage("signature") }),
 };
 
 export default uploadConfig;

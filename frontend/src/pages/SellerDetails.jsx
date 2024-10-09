@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import AccountCreation from "../components/SellerDetails/AccountCreation";
-
+import BankDetails from "../components/SellerDetails/BankDetails";
+import ShippingLocation from "../components/SellerDetails/ShippingLocation";
+import DigitalSignature from "../components/SellerDetails/DigitalSignature";
+import VerifyAndSubmit from "../components/SellerDetails/VerifyAndSubmit";
 function SellerDetails() {
   const { user } = useUser();
   const [activeStep, setActiveStep] = useState(2); // Default to step 2
@@ -103,7 +106,18 @@ function SellerDetails() {
                   )}
                 </div>
                 <div className="ml-4">
-                  <p className="font-bold">{step.title}</p>
+                  <p
+                    onClick={() =>
+                      index + 1 < activeStep ? setActiveStep(index + 1) : null
+                    } // Only allow click for previous steps
+                    className={`font-bold ${
+                      index + 1 < activeStep
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed"
+                    }`}
+                  >
+                    {step.title}
+                  </p>
                   <p className="text-sm text-gray-600">{step.description}</p>
                 </div>
               </div>
@@ -117,7 +131,12 @@ function SellerDetails() {
         {activeStep === 2 && (
           <AccountCreation onComplete={completeStep} /> // Pass the completeStep function as a prop
         )}
-        {activeStep === 2 && <div> {/* Content for Step 2 */} </div>}
+        {activeStep === 3 && <BankDetails onComplete={completeStep} />}
+        {activeStep === 4 && <ShippingLocation onComplete={completeStep} />}
+        {activeStep === 5 && <DigitalSignature onComplete={completeStep} />}
+
+        {activeStep === 6 && <VerifyAndSubmit />}
+
         {/* Continue for other steps... */}
       </div>
     </div>

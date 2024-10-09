@@ -6,7 +6,7 @@ import AdminPaySellers from "../components/AdminDashboard/AdminPaySellers/AdminP
 import OffersAndCategories from "../components/AdminDashboard/Offers And Categories/OffersAndCategories";
 import { FaBars } from "react-icons/fa"; // Icon for the hamburger menu
 import { FaTimes } from "react-icons/fa"; // Icon for the cross button (X)
-
+import VerifySellers from "../components/AdminDashboard/VerifySeller/VerifySellers";
 function AdminDashboard() {
   // State to track the current view
   const [currentView, setCurrentView] = useState("overview");
@@ -90,6 +90,14 @@ function AdminDashboard() {
             </li>
             <li>
               <button
+                onClick={() => handleViewChange("verifyseller")}
+                className="block px-4 py-2 text-lg hover:bg-violet-700 rounded"
+              >
+                Verify Sellers
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleViewChange("offersandcategories")}
                 className="block px-4 py-2 text-lg hover:bg-violet-700 rounded"
               >
@@ -115,6 +123,7 @@ function AdminDashboard() {
         {currentView === "orders" && <AdminOrders />}
         {currentView === "users" && <AdminUsers />}
         {currentView === "paysellers" && <AdminPaySellers />}
+        {currentView === "verifyseller" && <VerifySellers />}
         {currentView === "offersandcategories" && <OffersAndCategories />}
         {currentView === "settings" && <div>Settings Content</div>}
       </div>

@@ -1,13 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"; // Assuming these are the shadcn components
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [editUser, setEditUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortByRole, setSortByRole] = useState("all");
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1); // Keep track of the current page
 
   // Fetch users when the component mounts or when page changes
   useEffect(() => {
@@ -22,7 +31,6 @@ function AdminUsers() {
         console.error("Error fetching users:", err);
       }
     };
-
     fetchUsers();
   }, [page]);
 
@@ -43,8 +51,6 @@ function AdminUsers() {
 
   // Save the edited user and return to normal view
   const handleSave = async () => {
-    console.log(editUser);
-
     try {
       await axios.patch(
         `http://127.0.0.1:8000/api/v1/users/${editUser._id}`,
@@ -69,13 +75,11 @@ function AdminUsers() {
   // Filter users based on search and roles
   const filteredUsers = users.filter((user) => {
     const searchTermLower = searchTerm.toLowerCase();
-    const isRoleValid = ["customer", "seller"].includes(user.roles);
     return (
-      isRoleValid &&
-      (user.firstName.toLowerCase().includes(searchTermLower) ||
-        user.lastName.toLowerCase().includes(searchTermLower) ||
-        user.email.toLowerCase().includes(searchTermLower) ||
-        user.mobileNumber.includes(searchTerm))
+      user.firstName.toLowerCase().includes(searchTermLower) ||
+      user.lastName.toLowerCase().includes(searchTermLower) ||
+      user.email.toLowerCase().includes(searchTermLower) ||
+      user.mobileNumber.includes(searchTerm)
     );
   });
 
@@ -117,161 +121,117 @@ function AdminUsers() {
       </div>
 
       {/* Table */}
-      <div className="p-4">
-        {sortedUsers.length === 0 ? (
-          <div className="text-gray-500">No users found</div>
-        ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  First Name
-                </th>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Last Name
-                </th>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Mobile Number
-                </th>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 text-violet-900 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sortedUsers.map((user) => (
-                <tr
-                  key={user._id}
-                  className="hover:bg-gray-50 transition duration-200 ease-in-out"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {editUser && editUser._id === user._id ? (
-                      <input
-                        value={editUser.firstName}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            firstName: e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-1 rounded w-full"
-                      />
-                    ) : (
-                      user.firstName
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {editUser && editUser._id === user._id ? (
-                      <input
-                        value={editUser.lastName}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            lastName: e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-1 rounded w-full"
-                      />
-                    ) : (
-                      user.lastName
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {editUser && editUser._id === user._id ? (
-                      <input
-                        value={editUser.email}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            email: e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-1 rounded w-full"
-                      />
-                    ) : (
-                      user.email
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {editUser && editUser._id === user._id ? (
-                      <input
-                        value={editUser.mobileNumber}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            mobileNumber: e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-1 rounded w-full"
-                      />
-                    ) : (
-                      user.mobileNumber
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.roles}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
-                    {editUser && editUser._id === user._id ? (
-                      <button
-                        onClick={handleSave}
-                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700 transition-all duration-200"
-                      >
-                        Save
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleEditClick(user)}
-                        className="bg-violet-900 text-white px-3 py-1 rounded hover:bg-blue-700 transition-all duration-200"
-                      >
-                        Edit
-                      </button>
-                    )}
+      <Table>
+        <TableCaption>A list of users in the system.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>First Name</TableHead>
+            <TableHead>Last Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Mobile Number</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedUsers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center">
+                No users found
+              </TableCell>
+            </TableRow>
+          ) : (
+            sortedUsers.map((user) => (
+              <TableRow key={user._id}>
+                <TableCell>
+                  {editUser && editUser._id === user._id ? (
+                    <input
+                      value={editUser.firstName}
+                      onChange={(e) =>
+                        setEditUser({
+                          ...editUser,
+                          firstName: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 p-1 rounded w-full"
+                    />
+                  ) : (
+                    user.firstName
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editUser && editUser._id === user._id ? (
+                    <input
+                      value={editUser.lastName}
+                      onChange={(e) =>
+                        setEditUser({
+                          ...editUser,
+                          lastName: e.target.value,
+                        })
+                      }
+                      className="border border-gray-300 p-1 rounded w-full"
+                    />
+                  ) : (
+                    user.lastName
+                  )}
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.mobileNumber}</TableCell>
+                <TableCell>{user.roles}</TableCell>
+                <TableCell className="space-x-2">
+                  {editUser && editUser._id === user._id ? (
                     <button
-                      onClick={() => deleteUser(user._id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 transition-all duration-200"
+                      onClick={handleSave}
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700"
                     >
-                      Delete
+                      Save
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+                  ) : (
+                    <button
+                      onClick={() => handleEditClick(user)}
+                      className="bg-violet-900 text-white px-3 py-1 rounded hover:bg-blue-700"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    onClick={() => deleteUser(user._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
-        {/* Pagination */}
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className={`px-4 py-2 bg-gray-200 text-gray-700 rounded ${
-              page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-            }`}
-          >
-            Previous
-          </button>
-          <span className="text-gray-700">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-            className={`px-4 py-2 bg-gray-200 text-gray-700 rounded ${
-              page === totalPages
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-300"
-            }`}
-          >
-            Next
-          </button>
-        </div>
+      {/* Pagination */}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => handlePageChange(page - 1)}
+          disabled={page === 1}
+          className={`px-4 py-2 bg-gray-200 text-gray-700 rounded ${
+            page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+          }`}
+        >
+          Previous
+        </button>
+        <span className="text-gray-700">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(page + 1)}
+          disabled={page === totalPages}
+          className={`px-4 py-2 bg-gray-200 text-gray-700 rounded ${
+            page === totalPages
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-gray-300"
+          }`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

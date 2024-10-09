@@ -3,20 +3,17 @@ import { useUser } from "../../contexts/userContext";
 import axios from "axios";
 
 function AccountCreation({ onComplete }) {
-  const { user } = useUser();
-  console.log(user);
-
-  // Initialize form data with user information if available
+  const { user, setUser } = useUser();
   const [formData, setFormData] = useState({
-    gstNumber: "",
+    gstNumber: user.gstNumber || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     email: user?.email || "",
     mobileNumber: user?.mobileNumber || null,
   });
-
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [loading, setLoading] = useState(false); // Track loading state
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -30,19 +27,23 @@ function AccountCreation({ onComplete }) {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     try {
-      await axios.patch(
+      const res = await axios.patch(
         `http://127.0.0.1:8000/api/v1/users/${user._id}`,
         formData
       );
+      setUser(res.data.data.data);
       setSuccessMessage("Account updated successfully");
       setErrorMessage(null);
-      // onComplete(); // Call onComplete function to move to the next step
+      setLoading(false); // Stop loading
+      onComplete(); // Call onComplete function to move to the next step
     } catch (error) {
       setErrorMessage(
         "There was an error updating the account. Please try again."
       );
       setSuccessMessage(null);
+      setLoading(false); // Stop loading
     }
   };
 
@@ -57,6 +58,10 @@ function AccountCreation({ onComplete }) {
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
+        {/* Loader */}
+        {loading && (
+          <div className="loader mx-auto my-4"></div> // Display loader
+        )}
         <div>
           <label className="block font-medium mb-1" htmlFor="gstNumber">
             GST Number
@@ -130,7 +135,10 @@ function AccountCreation({ onComplete }) {
         <div className="md:col-span-2 flex justify-end">
           <button
             type="submit"
-            className="bg-violet-900 text-white py-2 px-6 rounded-lg hover:bg-violet-700 transition duration-200 shadow-md transform hover:scale-105"
+            disabled={loading} // Disable button while loading
+            className={`bg-violet-900 text-white py-2 px-6 rounded-lg hover:bg-violet-700 transition duration-200 shadow-md transform ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+            }`}
           >
             Next
           </button>

@@ -7,7 +7,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 function ProfileInfo() {
   const { user } = useUser();
-  console.log(user);
 
   return (
     <div>

@@ -6,10 +6,17 @@ import {
   getSellerMonthlyReport,
   createBoard,
   deleteBoard,
+  getAllunverifiedSellers,
 } from "../controllers/adminDashboard.js";
 import uploadConfig from "../config/multerConfig.js";
 Router.get("/", protect, restrictTo("admin"), getDashboardStats);
 Router.get("/payseller", protect, restrictTo("admin"), getSellerMonthlyReport);
+Router.get(
+  "/unverified",
+  protect,
+  restrictTo("admin"),
+  getAllunverifiedSellers
+);
 Router.post(
   "/boards",
   protect,

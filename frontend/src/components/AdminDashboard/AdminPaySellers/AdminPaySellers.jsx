@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Select } from "@/components/ui/select"; // You can import other components too
+import { Input } from "@/components/ui/input"; // You can import other components too
+import { Button } from "@/components/ui/button"; // You can import other components too
 
 function AdminPaySellers() {
   const [sellers, setSellers] = useState([]);
@@ -15,6 +26,7 @@ function AdminPaySellers() {
 
   const fetchSellersData = async (page) => {
     try {
+      setLoading(true);
       const res = await axios.get(
         `http://127.0.0.1:8000/api/v1/admin/payseller?page=${page}&limit=${limit}&search=${searchQuery}&sort=${sortOrder}`
       );
@@ -43,8 +55,13 @@ function AdminPaySellers() {
 
   const totalPages = Math.ceil(totalSellers / limit);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return <div className="loader"></div>; // Use your .loader class here
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -57,14 +74,14 @@ function AdminPaySellers() {
 
       {/* Search and Filter */}
       <div className="flex bg-white justify-between mt-4 p-2">
-        <input
+        <Input
           type="text"
           placeholder="Search by name, email, or phone"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border rounded-md p-2 w-2/3"
         />
-        <select
+        {/* <Select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
           className="border rounded-md p-2"
@@ -73,7 +90,7 @@ function AdminPaySellers() {
           <option value="lowest">Lowest Amount</option>
           <option value="mostOrders">Most Orders</option>
           <option value="leastOrders">Least Orders</option>
-        </select>
+        </Select> */}
       </div>
 
       {/* Sellers Table */}
@@ -81,99 +98,63 @@ function AdminPaySellers() {
         {sellers.length === 0 ? (
           <div className="text-gray-500">No sellers found</div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Seller Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Mobile Number
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Total Orders
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Total Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Details
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-violet-900 uppercase tracking-wider">
-                  Pay Sellers
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Seller Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Mobile Number</TableHead>
+                <TableHead>Total Orders</TableHead>
+                <TableHead>Total Amount</TableHead>
+                <TableHead>Details</TableHead>
+                <TableHead>Pay Sellers</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {sellers.map((seller) => (
-                <tr key={seller._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {seller.sellerName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {seller.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {seller.mobileNumber}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {seller.orderCount}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${seller.totalAmount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button
-                      className="text-violet-600 hover:underline"
+                <TableRow key={seller._id}>
+                  <TableCell>{seller.sellerName}</TableCell>
+                  <TableCell>{seller.email}</TableCell>
+                  <TableCell>{seller.mobileNumber}</TableCell>
+                  <TableCell>{seller.orderCount}</TableCell>
+                  <TableCell>${seller.totalAmount.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
                       onClick={() => openModal(seller.orders)}
                     >
                       Show Details
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-violet-600 hover:underline">
-                      Pay
-                    </button>
-                  </td>
-                </tr>
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="link">Pay</Button>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </div>
 
       {/* Pagination Controls */}
       <div className="flex justify-between mt-4">
-        <button
+        <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-2 bg-gray-300 text-gray-700 rounded ${
-            currentPage === 1
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
-          }`}
         >
           Previous
-        </button>
+        </Button>
         <span>
           Page {currentPage} of {totalPages}
         </span>
-        <button
+        <Button
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 bg-gray-300 text-gray-700 rounded ${
-            currentPage === totalPages
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
-          }`}
         >
           Next
-        </button>
+        </Button>
       </div>
 
       {/* Modal for showing order details */}
@@ -187,55 +168,43 @@ function AdminPaySellers() {
             >
               &times;
             </button>
-            <table className="min-w-full divide-y-0">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Product Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Price
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Product Name</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {selectedOrder?.map((order) => (
                   <React.Fragment key={order._id}>
-                    <tr>
-                      <td colSpan="4">
+                    <TableRow>
+                      <TableCell colSpan="4">
                         <hr className="border-t border-gray-300 my-1" />
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                     {order.products.map((product) => (
-                      <tr key={product.productId} className="border-0">
-                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <TableRow key={product.productId}>
+                        <TableCell>
                           <img
                             src={product.details.images[0]?.url}
                             alt={product.details.name}
                             className="w-16 h-16 object-cover"
                           />
-                        </td>
-                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
-                          {product.details.name}
-                        </td>
-                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
-                          {product.quantity}
-                        </td>
-                        <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
+                        </TableCell>
+                        <TableCell>{product.details.name}</TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>
                           ${product.details.price.toFixed(2)}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </React.Fragment>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
