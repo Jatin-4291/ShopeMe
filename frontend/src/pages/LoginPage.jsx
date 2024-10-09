@@ -59,7 +59,7 @@ function LoginPage() {
 
   return (
     <>
-      <div className="flex mt-2 h-3/5">
+      <div className="flex h-3/5">
         <div className="w-1/2 bg-violet-900 h-screen flex flex-col justify-center items-center text-white">
           <h1 className="text-5xl font-bold">
             Apni <span className=" text-yellow-400">Dukan</span>

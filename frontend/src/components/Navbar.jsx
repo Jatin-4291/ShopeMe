@@ -18,13 +18,14 @@ function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (user === null) return;
     if (user.photo) {
       setIsPhoto(true);
     }
   }, [user, setIsPhoto]);
 
   useEffect(() => {
-    if (user) {
+    if (user !== null) {
       const fetchCart = async () => {
         try {
           const userId = user._id;
@@ -42,7 +43,6 @@ function Navbar() {
     }
   }, [user, setCartItems]);
 
-  console.log(cartItems);
   const Notification = cartItems.reduce((accumulator, item) => {
     return accumulator + item.quantity;
   }, 0);
@@ -111,60 +111,62 @@ function Navbar() {
             </span>
           )}
         </Link>
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className="relative"
-        >
-          {isPhoto ? (
-            <div className="flex">
-              <img
-                src={user.photo}
-                alt="Profile"
-                className="object-cover w-8 h-8"
-              />
-              <span className="text-md mt-1">Profile</span>
-            </div>
-          ) : (
-            <div className="flex gap-1 mt-1">
-              <CiUser className="w-8 h-8" />
-              <span className="text-md mt-1.5">Profile</span>
-            </div>
-          )}
-          {isHovering && (
-            <div className="w-40 absolute z-10 right-2 top-full bg-white text-black shadow-lg rounded-md mb-4">
-              <Link
-                to="/user/profile"
-                className="block py-2 text-black hover:bg-gray-200"
-              >
-                <div className="flex items-center ml-2">
-                  <CiUser className="font-light w-6 h-6" />
-                  <p className="text-md ml-2">
-                    {user.firstName} {user.lastName}
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/wishlist"
-                className="block py-2 text-black hover:bg-gray-200"
-              >
-                <div className="flex items-center ml-2">
-                  <AiOutlineHeart className="font-light w-6 h-6" />
-                  <p className="text-md ml-2">Wishlist</p>
-                </div>
-              </Link>
-              <Link
-                to={`/user/orders/${user._id}`}
-                className="block py-2 text-black hover:bg-gray-200"
-              >
-                <div className="flex items-center ml-2">
-                  <FaBoxOpen className="font-light w-6 h-6" />
-                  <p className="text-md ml-2">Orders</p>
-                </div>
-              </Link>
-            </div>
-          )}
-        </div>
+        {user !== null && (
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="relative"
+          >
+            {isPhoto ? (
+              <div className="flex">
+                <img
+                  src={user.photo}
+                  alt="Profile"
+                  className="object-cover w-8 h-8"
+                />
+                <span className="text-md mt-1">Profile</span>
+              </div>
+            ) : (
+              <div className="flex gap-1 mt-1">
+                <CiUser className="w-8 h-8" />
+                <span className="text-md mt-1.5">Profile</span>
+              </div>
+            )}
+            {isHovering && (
+              <div className="w-40 absolute z-10 right-2 top-full bg-white text-black shadow-lg rounded-md mb-4">
+                <Link
+                  to="/user/profile"
+                  className="block py-2 text-black hover:bg-gray-200"
+                >
+                  <div className="flex items-center ml-2">
+                    <CiUser className="font-light w-6 h-6" />
+                    <p className="text-md ml-2">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                  </div>
+                </Link>
+                <Link
+                  to="/wishlist"
+                  className="block py-2 text-black hover:bg-gray-200"
+                >
+                  <div className="flex items-center ml-2">
+                    <AiOutlineHeart className="font-light w-6 h-6" />
+                    <p className="text-md ml-2">Wishlist</p>
+                  </div>
+                </Link>
+                <Link
+                  to={`/user/orders/${user?._id}`}
+                  className="block py-2 text-black hover:bg-gray-200"
+                >
+                  <div className="flex items-center ml-2">
+                    <FaBoxOpen className="font-light w-6 h-6" />
+                    <p className="text-md ml-2">Orders</p>
+                  </div>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
