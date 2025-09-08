@@ -3,7 +3,6 @@ import EmailEdit from "./EmailEdit";
 import MobileEdit from "./MobileEdit";
 import DeleteAcc from "./DeleteAcc";
 import { useUser } from "../../contexts/userContext";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 function ProfileInfo() {
   const { user } = useUser();
@@ -32,7 +31,7 @@ function ProfileInfo() {
             What happens when I update my email address (or mobile number)?
           </p>
           <p className="mt-2 text-sm">
-            Your login email id (or mobile number) changes, likewise. You'll
+            Your login email id (or mobile number) changes, likewise. You&#39;ll
             receive all your account related communication on your updated email
             address (or mobile number).{" "}
           </p>
@@ -51,9 +50,10 @@ function ProfileInfo() {
           What happens when I update my email address (or mobile number)?
         </p>
         <p className="mt-2 text-sm">
-          Updating your email address (or mobile number) doesn't invalidate your
-          account. Your account remains fully functional. You'll continue seeing
-          your Order history, saved information and personal details
+          Updating your email address (or mobile number) doesn&#39;t invalidate
+          your account. Your account remains fully functional. You&#39;ll
+          continue seeing your Order history, saved information and personal
+          details
         </p>
       </div>
       <DeleteAcc />

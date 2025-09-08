@@ -4,9 +4,10 @@ import { useSwipeable } from "react-swipeable";
 import { useProduct } from "../../contexts/productContext";
 import { useUser } from "../../contexts/userContext";
 import ClipLoader from "react-spinners/ClipLoader";
+import PropTypes from "prop-types";
 
 function Images({ id }) {
-  const { cartItems, setCartItems } = useProduct();
+  const { setCartItems } = useProduct();
   const { user } = useUser();
   const [images, setImages] = useState([]);
   const [imageState, setImageState] = useState(null);
@@ -267,5 +268,8 @@ function Images({ id }) {
     </div>
   );
 }
+Images.propTypes = {
+  id: PropTypes.string.isRequired,
+};
 
 export default Images;

@@ -6,7 +6,6 @@ import { useProduct } from "../contexts/productContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
-import { FaPlus } from "react-icons/fa6";
 import { ClipLoader } from "react-spinners";
 import {
   Dialog,
