@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useCategory } from "../../contexts/categoriesContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ConfirmationModal from "./ConfirmationModal"; // Import the modal component

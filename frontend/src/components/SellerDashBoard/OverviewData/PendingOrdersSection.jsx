@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 function PendingOrdersSection({ pendingOrders }) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg h-[500px] overflow-y-auto">

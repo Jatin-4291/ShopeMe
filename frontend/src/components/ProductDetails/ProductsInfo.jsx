@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useState, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import axios from "axios";
@@ -7,7 +9,7 @@ function ProductsInfo({ productId }) {
   const [postcode, setPostalCode] = useState("");
   const [isValidPincode, setIsValidPincode] = useState();
   const [product, setProduct] = useState({});
-  const [error, setError] = useState("");
+  const [setError] = useState("");
   const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
@@ -25,7 +27,7 @@ function ProductsInfo({ productId }) {
       }
     };
     getProductById();
-  }, [productId]);
+  }, [productId, setError]);
 
   const handlePostalCodeChange = (event) => {
     setPostalCode(event.target.value);

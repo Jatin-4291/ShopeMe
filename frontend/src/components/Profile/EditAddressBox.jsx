@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { useUser } from "../../contexts/userContext";
 function EditAddressBox({ setDisplayAddressBox }) {
@@ -143,5 +144,8 @@ function EditAddressBox({ setDisplayAddressBox }) {
     </div>
   );
 }
+EditAddressBox.propTypes = {
+  setDisplayAddressBox: PropTypes.func.isRequired,
+};
 
 export default EditAddressBox;

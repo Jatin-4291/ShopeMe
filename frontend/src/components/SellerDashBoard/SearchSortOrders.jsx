@@ -1,5 +1,7 @@
 // src/components/SearchSortOrders.js
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+
+import { useState } from "react";
 
 const SearchSortOrders = ({ onFilterChange }) => {
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,4 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+
+import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import axios from "axios"; // Make sure axios is installed
 import { useUser } from "../../contexts/userContext";

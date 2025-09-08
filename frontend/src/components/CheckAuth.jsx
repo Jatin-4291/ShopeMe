@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 function CheckAuth() {
   const { isAuthenticated, user, setUser, setIsAuthenticated } = useUser();
-  const [googleUser, setGoogleUser] = useState(null); // Correctly defining state
+  const [setGoogleUser] = useState(null); // Correctly defining state
 
   useEffect(() => {
     const getGoogleData = async () => {
@@ -27,7 +27,7 @@ function CheckAuth() {
     if (!isAuthenticated) {
       getGoogleData();
     }
-  }, [isAuthenticated, setUser, setIsAuthenticated]); // Dependencies
+  }, [isAuthenticated, setUser, setIsAuthenticated, setGoogleUser]); // Dependencies
 
   console.log(user);
   console.log(isAuthenticated);

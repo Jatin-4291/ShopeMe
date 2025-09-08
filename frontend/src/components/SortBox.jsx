@@ -1,3 +1,4 @@
+import useState from "react";
 function SortBox() {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -24,7 +25,9 @@ function SortBox() {
 
   return (
     <div className="">
-      <h1 className="font-bold m-3">Showing 1-24 result for "iphone-13"</h1>
+      <h1 className="font-bold m-3">
+        Showing 1-24 result for &quot;iphone-13&quot;
+      </h1>
       <br />
       <div className=" ml-3 flex flex-row space-x-4">
         <div

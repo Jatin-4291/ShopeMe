@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function VerifyAndSubmit() {
   const { user, setUser } = useUser();
-  const [isSellerApproved, setIsSellerApproved] = useState(false);
+  const [isSellerApproved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 

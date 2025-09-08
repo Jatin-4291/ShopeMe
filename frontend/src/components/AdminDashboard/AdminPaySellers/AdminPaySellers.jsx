@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Table,
@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Select } from "@/components/ui/select"; // You can import other components too
 import { Input } from "@/components/ui/input"; // You can import other components too
 import { Button } from "@/components/ui/button"; // You can import other components too
 
@@ -21,27 +20,30 @@ function AdminPaySellers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalSellers, setTotalSellers] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("highest");
+  const [sortOrder] = useState("highest");
   const limit = 8;
 
-  const fetchSellersData = async (page) => {
-    try {
-      setLoading(true);
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/v1/admin/payseller?page=${page}&limit=${limit}&search=${searchQuery}&sort=${sortOrder}`
-      );
-      setSellers(res.data.data.sellers);
-      setTotalSellers(res.data.data.totalSellers);
-      setLoading(false);
-    } catch (err) {
-      setError("Failed to load sellers data");
-      setLoading(false);
-    }
-  };
+  const fetchSellersData = useCallback(
+    async (page) => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/v1/admin/payseller?page=${page}&limit=${limit}&search=${searchQuery}&sort=${sortOrder}`
+        );
+        setSellers(res.data.data.sellers);
+        setTotalSellers(res.data.data.totalSellers);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load sellers data");
+        setLoading(false);
+      }
+    },
+    [searchQuery, sortOrder]
+  );
 
   useEffect(() => {
     fetchSellersData(currentPage);
-  }, [currentPage, searchQuery, sortOrder]);
+  }, [currentPage, searchQuery, sortOrder, fetchSellersData]);
 
   const openModal = (order) => {
     setSelectedOrder(order);

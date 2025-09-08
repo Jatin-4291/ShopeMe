@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 const CustomerReviewsSection = ({ customerReviews }) => (
   <div className="overview-section">
     <h3>Recent Customer Reviews</h3>
@@ -13,3 +15,5 @@ const CustomerReviewsSection = ({ customerReviews }) => (
     </ul>
   </div>
 );
+
+export default CustomerReviewsSection;

@@ -1,6 +1,5 @@
 import Navbar from "../components/Navbar";
 import Products from "../components/Products";
-import Filters from "../components/Filters";
 import { useProduct } from "../contexts/productContext";
 function ProductList() {
   const { searchProduct } = useProduct();
@@ -8,7 +7,7 @@ function ProductList() {
     <>
       <Navbar />
       <p className="ml-20 mt-4 font-semibold text-md">
-        Showing results for "{searchProduct}"
+        Showing results for &quot;{searchProduct}&quot;
       </p>
 
       <Products className="flex justify-center w-full" />

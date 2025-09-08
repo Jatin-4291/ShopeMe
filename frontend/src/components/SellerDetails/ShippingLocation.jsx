@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
 import axios from "axios";

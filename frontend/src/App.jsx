@@ -19,9 +19,6 @@ import SellerDashBoard from "./pages/SellerDashBoard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CategoryPage from "./pages/CategoryPage";
 import SubCategoryProducts from "./pages/SubCategoryProducts";
-import Overview from "./components/SellerDashBoard/Overview";
-import OrdersForSeller from "./components/AdminDashboard/AdminOrders";
-import SellerProducts from "./components/SellerDashBoard/SellerProducts";
 function App() {
   return (
     <BrowserRouter>

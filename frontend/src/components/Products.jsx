@@ -10,9 +10,9 @@ import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
 function Products() {
   const { user } = useUser();
   const [products, setProducts] = useState([]);
-  const [error, setError] = useState("");
+  const [setError] = useState("");
   const { searchProduct, setCartItems, cartItems } = useProduct(); // Add state for search product
-  const [quantities, setQuantities] = useState({}); // State for product quantities
+  const [setQuantities] = useState({}); // State for product quantities
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ function Products() {
     };
 
     if (searchProduct) fetchProductByName(); // Fetch only if searchProduct is not empty
-  }, [searchProduct]);
+  }, [searchProduct, setError]);
 
   const openProduct = (product) => {
     if (product && product._id) {

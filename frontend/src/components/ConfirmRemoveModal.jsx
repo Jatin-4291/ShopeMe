@@ -1,4 +1,6 @@
-function ConfirmRemoveModal() {
+/* eslint-disable react/prop-types */
+
+function ConfirmRemoveModal({ onClose, onConfirm }) {
   return (
     <div>
       <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">

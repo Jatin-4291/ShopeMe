@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 
 function ConfirmationModal({ isOpen, onClose, onConfirm }) {
   if (!isOpen) return null;

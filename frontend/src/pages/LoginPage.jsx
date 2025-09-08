@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 import GoogleLogo from "../assets/Google-icon.webp"; // Path to the Google logo image
@@ -12,9 +12,7 @@ function LoginPage() {
     password: "jatin1234",
   });
   const [error, setError] = useState("");
-  const [googleSignIn, setGoogleSignIn] = useState(false);
-  const { setIsAuthenticated, setUser, user, googleLogin, setGoogleLogin } =
-    useUser();
+  const { setIsAuthenticated, setUser } = useUser();
   const navigate = useNavigate();
 
   const handleChange = (e) => {

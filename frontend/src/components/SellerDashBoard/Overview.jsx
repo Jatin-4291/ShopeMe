@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import PendingOrdersSection from "./OverviewData/PendingOrdersSection";
 import RecentOrdersSection from "./OverviewData/RecentOrdersSection";

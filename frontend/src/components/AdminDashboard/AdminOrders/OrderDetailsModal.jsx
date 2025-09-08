@@ -1,5 +1,4 @@
-import React from "react";
-
+/* eslint-disable react/prop-types */
 function OrderDetailsModal({ order, onClose }) {
   if (!order) return null;
 

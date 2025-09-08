@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -14,7 +15,7 @@ function VerifySellers() {
   const [error, setError] = useState(null); // Start with no error
   const [loading, setLoading] = useState(true); // Initially loading is true
   const [sellers, setSellers] = useState([]); // Initialize sellers as an empty array
-  const [totalSellers, setTotalSellers] = useState(0); // Initialize total sellers
+  const [setTotalSellers] = useState(0); // Initialize total sellers
   const [searchQuery, setSearchQuery] = useState(""); // New state for search
 
   useEffect(() => {
@@ -32,7 +33,7 @@ function VerifySellers() {
       }
     };
     fetchSellers();
-  }, []);
+  }, [setTotalSellers]);
 
   const handleVerify = async (sellerId) => {
     try {
