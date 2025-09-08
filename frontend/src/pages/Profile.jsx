@@ -7,8 +7,10 @@ import { MdManageAccounts, MdFolderShared } from "react-icons/md";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import ProfileInfo from "../components/Profile/ProfileInfo";
 import ManageAddress from "../components/Profile/ManageAddress";
-
+import ReviewsAndRating from "../components/Profile/ReviewsAndRating";
+import { useUser } from "../contexts/userContext";
 function Profile() {
+  const { user } = useUser();
   const [displayedComponent, setDisplayedComponent] = useState(null);
 
   const showProfileInfo = () => {
@@ -18,7 +20,9 @@ function Profile() {
   const showManageAddress = () => {
     setDisplayedComponent("manageAddress");
   };
-  const showReviewAndRating = () => {};
+  const showReviewAndRating = () => {
+    setDisplayedComponent("reviewandrating");
+  };
   const showWishList = () => {};
   const showNotifications = () => {};
 
@@ -30,11 +34,14 @@ function Profile() {
           <div className="w-2/6 pr-4 border-r border-gray-300">
             <UserName />
             <div className="mt-6">
-              <div className="h-16 shadow-md bg-white border rounded-lg mt-5 cursor-pointer flex items-center gap-4 px-4 hover:bg-gray-100">
+              <Link
+                to={`/user/orders/${user._id}`}
+                className="h-16 shadow-md bg-white border rounded-lg mt-5 cursor-pointer flex items-center gap-4 px-4 hover:bg-gray-100"
+              >
                 <FaBox className="text-violet-900 text-3xl" />
                 <h1 className="text-xl text-gray-700">My Orders</h1>
                 <FaChevronRight className="text-xl text-violet-900 ml-auto" />
-              </div>
+              </Link>
               <div className="h-auto bg-white cursor-pointer mt-5 p-4 hover:bg-gray-100 rounded-lg">
                 <div className="flex items-center gap-4">
                   <MdManageAccounts className="text-3xl text-violet-900" />
@@ -93,6 +100,7 @@ function Profile() {
             {displayedComponent === null && <ProfileInfo />}
             {displayedComponent === "profileInfo" && <ProfileInfo />}
             {displayedComponent === "manageAddress" && <ManageAddress />}
+            {displayedComponent === "reviewandrating" && <ReviewsAndRating />}
           </div>
         </div>
       </div>

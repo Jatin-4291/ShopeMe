@@ -107,7 +107,7 @@ export const getDashboardStats = async (req, res) => {
         },
       },
       { $sort: { totalSales: -1 } }, // Sort by total sales in descending order
-      { $limit: 5 }, // Limit to top 5 products
+      { $limit: 10 }, // Limit to top 5 products
     ]);
 
     // Aggregation for Total Orders by State

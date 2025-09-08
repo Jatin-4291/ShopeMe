@@ -8,7 +8,7 @@ function Logout() {
   const { setIsAuthenticated, setUser } = useUser();
   setIsAuthenticated(false);
   setUser(false);
-  return <Navigate to="/login" />;
+  return <Navigate to="/" />;
 }
 
 export default Logout;

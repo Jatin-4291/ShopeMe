@@ -6,7 +6,7 @@ export const UserProvider = function ({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isPhoto, setIsPhoto] = useState(false);
-
+  const [googleLogin, setGoogleLogin] = useState(false);
   useEffect(() => {
     if (user === null) return;
     localStorage.setItem("user", JSON.stringify(user));
@@ -34,6 +34,8 @@ export const UserProvider = function ({ children }) {
       value={{
         user,
         setUser,
+        googleLogin,
+        setGoogleLogin,
         isAuthenticated,
         setIsAuthenticated,
         isPhoto,

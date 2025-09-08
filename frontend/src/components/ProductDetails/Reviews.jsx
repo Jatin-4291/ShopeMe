@@ -1,63 +1,88 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ProgressBar from "@ramonak/react-progress-bar";
+import ReviewModal from "./ReviewModal"; // Import the ReviewModal
+import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
 
-function Reviews() {
-  const ratings = [5, 4, 3, 2, 1]; // Array to iterate over
-  const fakeReviews = [
-    {
-      userName: "John Doe",
-      rating: 5,
-      review:
-        "Absolutely love my new iPhone 13! The camera quality is amazing, and the battery life is impressive.",
-    },
-    {
-      userName: "Alice Smith",
-      rating: 4,
-      review:
-        "The iPhone 13 is a solid upgrade from my previous phone. It's fast, sleek, and the display is gorgeous.",
-    },
-    {
-      userName: "Emily Johnson",
-      rating: 5,
-      review:
-        "I've been using the iPhone 13 for a week now, and it's been fantastic. No complaints at all!",
-    },
-    {
-      userName: "Michael Brown",
-      rating: 3,
-      review:
-        "The iPhone 13 is good overall, but I expected more improvements in terms of features for the price.",
-    },
-    {
-      userName: "Sophia Wilson",
-      rating: 5,
-      review:
-        "The iPhone 13 exceeded my expectations. The performance is top-notch, and the design is beautiful.",
-    },
-    // Add more reviews as needed
-  ];
+function Reviews({ productId }) {
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [loading, setLoading] = useState(true); // State for loading
+  const ratings = [5, 4, 3, 2, 1];
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoading(true); // Set loading to true before fetching
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/v1/review/${productId}`
+        );
+
+        const fetchedReviews = response.data.data.reviews;
+        setReviews(fetchedReviews);
+
+        const totalRating = fetchedReviews.reduce(
+          (sum, review) => sum + review.rating,
+          0
+        );
+        setAverageRating(
+          fetchedReviews.length
+            ? (totalRating / fetchedReviews.length).toFixed(1)
+            : 0
+        );
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
+    };
+
+    fetchReviews();
+  }, [productId]);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <ClipLoader color="#6B46C1" loading={loading} size={50} />{" "}
+        {/* Loading Spinner */}
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="border border-s-blue-500 m-4">
         <div className="flex justify-between mt-3">
-          <h1 className="text-2xl font-medium ml-5 ">Reviews & Rating </h1>
-          <button className="w-25 h-11 mr-10 border border-s-blue-500 shadow-md">
+          <h1 className="text-2xl font-medium ml-5">Reviews & Rating</h1>
+          <button
+            onClick={openModal}
+            className="w-25 h-11 mr-10 border border-s-blue-500 shadow-md"
+          >
             Rate Product
           </button>
         </div>
         <div className="flex m-5 gap-4">
           <div>
-            <h1 className="text-5xl">4.6</h1>
-            <p className="text-gray-500 text-sm">28,00,000 Rating</p>
-            <p className="text-gray-500 text-sm">47,000 Reviews</p>
+            <h1 className="text-5xl">{averageRating}</h1>
+            <p className="text-gray-500 text-sm">{reviews.length} Ratings</p>
+            <p className="text-gray-500 text-sm">{reviews.length} Reviews</p>
           </div>
           <div>
             {ratings.map((rating, index) => (
               <div key={index} className="flex">
-                <p className=""> {rating} &#9733;</p>
+                <p>{rating} &#9733;</p>
                 <ProgressBar
                   className="m-2"
-                  completed={-20}
+                  completed={
+                    (reviews.filter((review) => review.rating === rating)
+                      .length /
+                      reviews.length) *
+                    100
+                  }
                   width={100}
                   height={5}
                   isLabelVisible={false}
@@ -69,18 +94,23 @@ function Reviews() {
           </div>
         </div>
 
-        {/* reviews */}
-        {fakeReviews.map((fakeReview, index) => (
+        {/* Reviews List */}
+        {reviews.map((review, index) => (
           <div className="m-3 h-16 border border-solid p-2" key={index}>
             <div className="flex gap-5">
               <div className="bg-green-700 w-6 text-white text-center border rounded-md">
-                {fakeReview.rating}
+                {review.rating}
               </div>
-              <div className="text-sm text-gray-600">{fakeReview.userName}</div>
+              <div className="text-sm text-gray-600">{review.user.name}</div>
             </div>
-            <div>{fakeReview.review}</div>
+            <div>{review.review}</div>
           </div>
         ))}
+
+        {/* Modal for submitting reviews */}
+        {isModalOpen && (
+          <ReviewModal productId={productId} onClose={closeModal} />
+        )}
       </div>
     </div>
   );

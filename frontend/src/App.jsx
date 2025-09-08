@@ -17,6 +17,11 @@ import OrdersPage from "./pages/OrdersPage";
 import SellerDetails from "./pages/SellerDetails";
 import SellerDashBoard from "./pages/SellerDashBoard";
 import AdminDashboard from "./pages/AdminDashboard";
+import CategoryPage from "./pages/CategoryPage";
+import SubCategoryProducts from "./pages/SubCategoryProducts";
+import Overview from "./components/SellerDashBoard/Overview";
+import OrdersForSeller from "./components/AdminDashboard/AdminOrders";
+import SellerProducts from "./components/SellerDashBoard/SellerProducts";
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +34,9 @@ function App() {
           <Route path="signup" element={<SignUpPage />} />
           <Route path="forgotpassward" element={<ForgotPassward />} />
           <Route path="resetpassword/:token" element={<ResetPassword />} />
+          <Route path="categorypage/:id" element={<CategoryPage />} />
+          <Route path="subcategorypage/:id" element={<SubCategoryProducts />} />
+          <Route path="cart" element={<CartPage />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="/redirect" element={<CheckAuth />} />
@@ -43,6 +51,8 @@ function App() {
           <Route path="cart/:id" element={<CartPage />} />
           <Route path="orders/:orderId" element={<OrdersPage />} />
           <Route path="seller-details" element={<SellerDetails />} />
+          <Route path="categorypage/:id" element={<CategoryPage />} />
+          <Route path="subcategorypage/:id" element={<SubCategoryProducts />} />
         </Route>
         <Route
           path="/seller"

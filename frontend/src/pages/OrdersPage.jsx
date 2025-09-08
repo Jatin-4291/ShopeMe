@@ -3,6 +3,7 @@ import axios from "axios";
 import { useUser } from "../contexts/userContext";
 import Navbar from "../components/Navbar";
 import DisplayOrders from "../components/DisplayOrders";
+import { ClipLoader } from "react-spinners";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -42,12 +43,6 @@ function OrdersPage() {
     }
   }, [filter, orders]);
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
   if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   return (
@@ -68,7 +63,7 @@ function OrdersPage() {
               className={`cursor-pointer py-2 px-4 rounded ${
                 filter === "Delivered" ? "bg-violet-700 font-bold" : ""
               }`}
-              onClick={() => setFilter("delivered")}
+              onClick={() => setFilter("Delivered")}
             >
               Delivered
             </li>
@@ -94,7 +89,15 @@ function OrdersPage() {
 
       {/* Orders Content */}
       <div className="flex-1 overflow-y-auto pt-36 bg-gray-100">
-        <DisplayOrders filter={filter} orders={filteredOrders} />
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <ClipLoader color="#6B46C1" loading={loading} size={50} />
+          </div>
+        ) : filteredOrders.length > 0 ? (
+          <DisplayOrders filter={filter} orders={filteredOrders} />
+        ) : (
+          <div className="text-center text-gray-600">No orders found.</div>
+        )}
       </div>
     </div>
   );

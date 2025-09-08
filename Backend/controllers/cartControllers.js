@@ -19,7 +19,8 @@ export const getCartByUser = catchAsync(async (req, res, next) => {
   });
 });
 export const addToCart = catchAsync(async (req, res, next) => {
-  const { userId, productId } = req.body;
+  const { userId, productId, quantity } = req.body;
+  console.log(userId, productId, quantity);
 
   // Find the product to get seller information
   const product = await Product.findById(productId);
@@ -35,7 +36,7 @@ export const addToCart = catchAsync(async (req, res, next) => {
     // Create a new cart with the item including seller information
     cart = await Cart.create({
       userId,
-      items: [{ productId, quantity: 1, sellerId: product.seller }],
+      items: [{ productId, quantity: 1 || quantity, sellerId: product.seller }],
     });
     console.log(cart);
   } else {
@@ -46,7 +47,7 @@ export const addToCart = catchAsync(async (req, res, next) => {
 
     if (itemIndex > -1) {
       // Product exists in the cart, update the quantity
-      cart.items[itemIndex].quantity += 1;
+      cart.items[itemIndex].quantity = quantity;
     } else {
       // Product does not exist in the cart, add a new item with seller information
       console.log(product.seller);

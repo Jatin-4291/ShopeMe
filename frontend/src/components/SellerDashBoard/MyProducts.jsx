@@ -1,15 +1,36 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"; // Importing ShadCN components
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FaEdit, FaTrash } from "react-icons/fa"; // Importing icons
 
 function MyProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newStock, setNewStock] = useState({});
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
-  const [searchField, setSearchField] = useState("name"); // Field to search by
-  const [sortCriteria, setSortCriteria] = useState("name"); // Default sort criteria
-  const [sortDirection, setSortDirection] = useState("asc"); // Default sort direction
+  const [newPrice, setNewPrice] = useState({});
+  const [editProductId, setEditProductId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField, setSearchField] = useState("name");
 
   useEffect(() => {
     const getSellerProductsList = async () => {
@@ -17,8 +38,6 @@ function MyProducts() {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/v1/product/"
         );
-        console.log(response.data.data.products);
-
         setProducts(response.data.data.products);
         setLoading(false);
       } catch (error) {
@@ -36,27 +55,63 @@ function MyProducts() {
       [productId]: value,
     }));
   };
+  const handlePriceChange = (productId, value) => {
+    setNewPrice((prevPrice) => ({
+      ...prevPrice,
+      [productId]: value,
+    }));
+  };
 
-  const handleStockSubmit = async (product) => {
+  const handleSubmit = async (product) => {
     try {
       const updatedStock =
         Number(product.stock) + Number(newStock[product._id] || 0);
+      const updatedPrice = newPrice[product._id]
+        ? Number(newPrice[product._id])
+        : product.price;
+
       await axios.patch(`http://127.0.0.1:8000/api/v1/product/${product._id}`, {
         stock: updatedStock,
+        price: updatedPrice,
       });
 
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
-          p._id === product._id ? { ...p, stock: updatedStock } : p
+          p._id === product._id
+            ? { ...p, stock: updatedStock, price: updatedPrice }
+            : p
         )
       );
+
       setNewStock((prevStock) => ({
         ...prevStock,
         [product._id]: "",
       }));
+      setNewPrice((prevPrice) => ({
+        ...prevPrice,
+        [product._id]: "",
+      }));
+
+      setEditProductId(null); // Exit edit mode
     } catch (error) {
-      console.error("Error updating stock:", error);
-      setError("Failed to update stock");
+      console.error("Error updating product:", error);
+      setError("Failed to update product");
+    }
+  };
+
+  const handleEditClick = (productId) => {
+    setEditProductId(productId);
+  };
+
+  const handleDeleteClick = async (productId) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/v1/product/${productId}`);
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product._id !== productId)
+      );
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      setError("Failed to delete product");
     }
   };
 
@@ -71,206 +126,118 @@ function MyProducts() {
     return false;
   });
 
-  const sortedProducts = filteredProducts.sort((a, b) => {
-    const criteria = sortCriteria;
-    const direction = sortDirection === "asc" ? 1 : -1;
-
-    if (a[criteria] < b[criteria]) return -1 * direction;
-    if (a[criteria] > b[criteria]) return 1 * direction;
-    return 0;
-  });
-
   if (loading) return <div className="p-4">Loading...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
-  const getStatusTextColor = (status, stock) => {
-    if (status === "In stock") return "text-green-500";
-    if (stock < 10) return "text-yellow-700";
-    return "text-red-500";
-  };
-
   return (
-    <div className="p-2">
-      <div className="flex justify-between  mb-4">
-        <div className="flex gap-5">
-          <input
-            type="text"
-            placeholder={`Search by ${searchField}...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="p-2 w-2/5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-900 focus:border-violet-900 sm:text-sm mb-2"
-          />
-          <select
-            value={searchField}
-            onChange={(e) => setSearchField(e.target.value)}
-            className="p-2 w-2/5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-900 focus:border-violet-900 sm:text-sm mb-2"
-          >
-            <option value="name">Search by Name</option>
-            <option value="brand">Search by Brand</option>
-            <option value="category">Search by Category</option>
-          </select>
-        </div>
-        <div className="flex space-x-4 mb-4">
-          <select
-            value={sortCriteria}
-            onChange={(e) => setSortCriteria(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-900 focus:border-violet-900 sm:text-sm"
-          >
-            <option value="name">Sort by Name</option>
-            <option value="price">Sort by Price</option>
-            <option value="brand">Sort by Brand</option>
-            <option value="stock">Sort by Stock</option>
-            <option value="status">Sort by Status</option>
-          </select>
-          <div className="flex items-center">
-            <button
-              onClick={() => setSortDirection("asc")}
-              className={`p-2 border border-gray-300 rounded-l-md ${
-                sortDirection === "asc"
-                  ? "bg-violet-900 text-white"
-                  : "bg-white"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={() => setSortDirection("desc")}
-              className={`p-2 border border-gray-300 rounded-r-md ${
-                sortDirection === "desc"
-                  ? "bg-violet-900 text-white"
-                  : "bg-white"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+    <div className="p-4">
+      <h1 className="text-xl font-semibold mb-4">My Products</h1>
+      <div className="mb-4 flex justify-between">
+        <Input
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-1/2"
+        />
+        <Select onValueChange={(value) => setSearchField(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Search type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="category">Category</SelectItem>
+              <SelectItem value="brand">Brand</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
-      {sortedProducts.length === 0 ? (
-        <div className="text-gray-500">No products found</div>
-      ) : (
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Image
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Price
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Brand
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Add Stock
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {sortedProducts.map((product) => (
-              <tr key={product._id}>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  {product.images.length > 0 && (
-                    <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded">
-                      <img
-                        src={product.images[0].url}
-                        alt={product.images[0].alt || "Product Image"}
-                        className="object-contain w-full h-full"
-                      />
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {product.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.category._id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${product.price}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.description}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.brand}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.stock}
-                </td>
-                <td
-                  className={`px-6 py-4 whitespace-nowrap text-sm ${getStatusTextColor(
-                    product.status,
-                    product.stock
-                  )}`}
-                >
-                  {product.status}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <form
-                    className="flex items-center"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleStockSubmit(product);
-                    }}
+      <Table>
+        <TableCaption>A list of my products.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Image</TableHead>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Brand</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Stock</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredProducts.map((product) => (
+            <TableRow key={product._id}>
+              <TableCell>
+                <img
+                  src={product.images[0].url}
+                  alt={product.name}
+                  className="w-20 h-20 object-cover"
+                />
+              </TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>{product.brand}</TableCell>
+              <TableCell>{product.category.name}</TableCell>
+              <TableCell>
+                {editProductId === product._id ? (
+                  <Input
+                    type="number"
+                    min="0"
+                    value={newPrice[product._id] || product.price}
+                    onChange={(e) =>
+                      handlePriceChange(product._id, e.target.value)
+                    }
+                    className="w-20"
+                  />
+                ) : (
+                  `$${product.price.toFixed(2)}`
+                )}
+              </TableCell>
+              <TableCell>
+                {editProductId === product._id ? (
+                  <Input
+                    type="number"
+                    min="0"
+                    placeholder={product.stock}
+                    value={newStock[product._id] || ""}
+                    onChange={(e) =>
+                      handleStockChange(product._id, e.target.value)
+                    }
+                    className="w-20"
+                  />
+                ) : (
+                  product.stock
+                )}
+              </TableCell>
+              <TableCell>
+                {editProductId === product._id ? (
+                  <Button
+                    className="bg-violet-900"
+                    onClick={() => handleSubmit(product)}
                   >
-                    <input
-                      type="number"
-                      value={newStock[product._id] || ""}
-                      onChange={(e) =>
-                        handleStockChange(product._id, e.target.value)
-                      }
-                      placeholder="Add Stock"
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-900 focus:border-violet-900 sm:text-sm"
-                    />
-                  </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                    <FaEdit />
+                  </Button>
+                ) : (
+                  <div className="flex">
+                    <Button
+                      className="bg-violet-900 mr-2"
+                      onClick={() => handleEditClick(product._id)}
+                    >
+                      <FaEdit />
+                    </Button>
+                    <Button
+                      className="bg-red-500"
+                      onClick={() => handleDeleteClick(product._id)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </div>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

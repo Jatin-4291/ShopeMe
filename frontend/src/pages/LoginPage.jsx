@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
+import GoogleLogo from "../assets/Google-icon.webp"; // Path to the Google logo image
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -11,15 +12,17 @@ function LoginPage() {
     password: "jatin1234",
   });
   const [error, setError] = useState("");
-  const { setIsAuthenticated, setUser, user } = useUser();
+  const [googleSignIn, setGoogleSignIn] = useState(false);
+  const { setIsAuthenticated, setUser, user, googleLogin, setGoogleLogin } =
+    useUser();
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { email, password } = formData;
 
     if (!email || !password) {
@@ -38,25 +41,19 @@ function LoginPage() {
         isEmail(email) ? { email, password } : { mobileNumber: email, password }
       );
 
-      // Set token in local storage
       localStorage.setItem("jwt", data.token);
       localStorage.setItem("user", JSON.stringify(data.data.user));
-      // Set authentication state to true
       setIsAuthenticated(true);
-      // Set user data
       setUser(data.data.user);
-      // Redirect the user to a secure route
-      console.log("click");
-
       navigate("/redirect");
     } catch (error) {
-      // Check if error has a response and parse the error message
       let errorMessage = "An error occurred. Please try again.";
-
       setError(errorMessage);
     }
   };
-
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:8000/auth/google/callback", "_self");
+  };
   return (
     <>
       <div className="flex h-3/5">
@@ -65,7 +62,6 @@ function LoginPage() {
             Apni <span className=" text-yellow-400">Dukan</span>
           </h1>
           <br />
-
           <h3 className="text-2xl">All Things AnyWhere Anytime Time</h3>
         </div>
         <div className="w-1/2 h-4/5 flex flex-col justify-center items-center">
@@ -92,9 +88,24 @@ function LoginPage() {
               />
               <div className="w-1/2 text-violet-900 text-xs flex justify-between">
                 <Link to="/signup">Signup</Link>
-                <Link to="/forgotPassward">ForgotPassWord</Link>
+                <Link to="/forgotPassword">ForgotPassword</Link>
               </div>
-              <button className="w-1/3 h-10 m-4 bg-violet-900 font-bold text-xl text-center text-white rounded-md">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="w-1/4 h-10 m-4 bg-white border border-gray-300 font-bold text-xl text-center text-black rounded-md flex items-center justify-center"
+              >
+                <img
+                  src={GoogleLogo}
+                  alt="Google Logo"
+                  className="w-5 h-5 mr-2"
+                />
+                <p className="text-sm font-medium">Login with Google</p>
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="w-1/3 h-10 m-4 bg-violet-900 font-bold text-xl text-center text-white rounded-md"
+              >
                 Login
               </button>
             </div>

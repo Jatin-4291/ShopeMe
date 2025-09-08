@@ -57,15 +57,15 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "A user must have a password"],
+    required: [false, "A user must have a password"],
     minlength: 8,
     select: true,
   },
   mobileNumber: {
     type: String,
-    required: [true, "A user must have a Mobile No."],
+    required: [false, "A user must have a Mobile No."],
     unique: true,
-    length: 10,
+    length: 12,
   },
   gstNumber: {
     type: String,
@@ -100,7 +100,7 @@ const userSchema = mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: [true, `A user must confirm password`],
+    required: [false, `A user must confirm password`],
     validate: {
       validator: function (el) {
         return el === this.password;

@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useUser } from "../../contexts/userContext";
+import ClipLoader from "react-spinners/ClipLoader";
+
 function MobileEdit() {
   const [isEdit, setIsEdit] = useState(false);
-  const [mobile, setMobile] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Loader state
   const { user, setUser } = useUser();
   const id = user._id;
 
   const handleEdit = () => {
-    setMobile(user.mobileNumber);
+    setMobileNumber(user.mobileNumber);
     setIsEdit(true);
   };
 
@@ -18,10 +21,11 @@ function MobileEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
     try {
       const { data } = await axios.patch(
         `http://127.0.0.1:8000/api/v1/users/${id}`,
-        { mobile }
+        { mobileNumber }
       );
       console.log(data.data.data); // This should log the response data
       setUser(data.data.data); // Update the user context with the new data
@@ -29,6 +33,7 @@ function MobileEdit() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false); // Stop loading
   };
 
   return (
@@ -54,15 +59,23 @@ function MobileEdit() {
         </div>
         <div className="flex gap-4">
           {isEdit ? (
-            <form onSubmit={handleSubmit} className="flex gap-4">
+            <form onSubmit={handleSubmit} className="flex gap-4 items-center">
               <input
                 type="text"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
                 className="w-72 h-12 border border-gray-300 text-gray-400 text-center"
               />
-              <button className="bg-yellow-400 hover:bg-yellow-500 text-black h-12 w-20 flex justify-center items-center border rounded-md transition duration-300 ease-in-out">
-                Save
+              <button
+                type="submit"
+                className="bg-yellow-400 hover:bg-yellow-500 text-black h-12 w-20 flex justify-center items-center border rounded-md transition duration-300 ease-in-out"
+                disabled={isLoading} // Disable button while loading
+              >
+                {isLoading ? (
+                  <ClipLoader color={"#000"} loading={isLoading} size={20} />
+                ) : (
+                  "Save"
+                )}
               </button>
             </form>
           ) : (

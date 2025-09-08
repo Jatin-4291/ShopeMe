@@ -9,13 +9,23 @@ import cartRoutes from "./routes/cartRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import homepageRoutes from "./routes/homepageRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import otpRoutes from "./routes/otpRoutes.js";
+import passport from "passport";
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use((req, res, next) => {
   next();
 });
+
 app.get("/", (req, res, next) => {
   return res.status(200).json({
     status: "ok",
@@ -30,5 +40,7 @@ app.use(`/api/v1/cart`, cartRoutes);
 app.use(`/api/v1/dashboard`, dashboardRoutes);
 app.use(`/api/v1/admin`, adminDashboardRoutes);
 app.use(`/api/v1/homepage`, homepageRoutes);
+app.use(`/api/v1/review`, reviewRoutes);
+app.use(`/api/v1/otp`, otpRoutes);
 
 export default app;

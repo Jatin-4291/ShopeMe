@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import ShadCN card components
-
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/userContext";
 function CategoryProducts() {
   const [parentCategories, setParentCategories] = useState([]);
   const [childElements, setChildElements] = useState({}); // Object to store child elements for each category
+  const navigate = useNavigate();
+  const { user } = useUser();
 
   // Fetch parent categories and their children
   useEffect(() => {
@@ -39,7 +42,16 @@ function CategoryProducts() {
       console.error(`Error fetching children for category ${parentId}:`, error);
     }
   };
+  const handleOpenPage = (event, categoryId) => {
+    event.stopPropagation(); // Stop the event from propagating
+    if (user) {
+      console.log("hello");
 
+      navigate(`/user/subcategorypage/${categoryId}`);
+    } else {
+      navigate(`/subcategorypage/${categoryId}`);
+    }
+  };
   return (
     <div className="p-2 mt-4">
       {parentCategories.map((category) => {
@@ -54,6 +66,7 @@ function CategoryProducts() {
             <div className="grid grid-cols-10 gap-6 flex-shrink p-2 px-4">
               {children.map((child) => (
                 <Card
+                  onClick={(event) => handleOpenPage(event, child._id)}
                   key={child._id}
                   className="text-center bg-white justify-center transition-transform duration-200 hover:scale-101"
                 >

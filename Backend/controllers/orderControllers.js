@@ -6,6 +6,7 @@ import { deleteOne, updateOne } from "./handlerFactory.js";
 import AppError from "../utils/AppError.js";
 import Review from "../Models/reviewModels.js";
 import mongoose from "mongoose";
+
 import { getAll } from "./handlerFactory.js";
 export const createOrder = catchAsync(async (req, res, next) => {
   const { userId, products, totalAmount } = req.body;
@@ -131,12 +132,9 @@ export const getOrdersForSeller = catchAsync(async (req, res, next) => {
 export const getSellerOverview = async (req, res) => {
   try {
     const { sellerId } = req.params;
-    console.log(sellerId);
 
-    // const { startDate, endDate } = req.query; // Optional date range for filtering
-
-    // 1. Total Revenue
-    const totalRevenue = await Order.aggregate([
+    // 1. Total Revenue (Date-wise) and Overall Total Revenue
+    const revenueData = await Order.aggregate([
       {
         $match: {
           sellerId: new mongoose.Types.ObjectId(sellerId),
@@ -144,23 +142,41 @@ export const getSellerOverview = async (req, res) => {
         },
       },
       {
-        $match: {
-          placedDate: {
-            $gte: new Date("1970-01-01"),
-            $lte: new Date(),
-          },
-        },
-      },
-
-      {
         $group: {
-          _id: null,
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$placedDate" } },
           totalRevenue: { $sum: "$totalAmount" },
         },
       },
+      {
+        $sort: { _id: 1 }, // Sort by date in ascending order
+      },
     ]);
-    console.log("hello", totalRevenue);
-    // 2. Number of Orders
+
+    const overallTotalRevenue = revenueData.reduce(
+      (acc, curr) => acc + curr.totalRevenue,
+      0
+    );
+
+    // 2. Number of Orders by Date
+    const orderCountsByDate = await Order.aggregate([
+      {
+        $match: {
+          sellerId: new mongoose.Types.ObjectId(sellerId),
+          status: { $in: ["Placed", "Dispatched", "Delivered"] },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$placedDate" } },
+          orderCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by date in ascending order
+      },
+    ]);
+
+    // 3. Number of Orders overall
     const orderCounts = await Order.aggregate([
       { $match: { sellerId: new mongoose.Types.ObjectId(sellerId) } },
       {
@@ -171,7 +187,7 @@ export const getSellerOverview = async (req, res) => {
       },
     ]);
 
-    // 3. Top-Selling Products
+    // 4. Top-Selling Products
     const topSellingProducts = await Order.aggregate([
       {
         $match: {
@@ -202,42 +218,122 @@ export const getSellerOverview = async (req, res) => {
           productId: "$_id",
           name: "$product.name",
           totalSold: 1,
+          images: "$product.images",
         },
       },
     ]);
 
-    // 4. Recent Orders
+    // 5. Recent Orders
     const recentOrders = await Order.find({ sellerId })
       .sort({ placedDate: -1 })
-      .limit(10)
-      .populate("userId", "name")
-      .populate("products.productId", "name");
+      .limit(5)
+      .populate("userId", "firstName lastName email mobileNumber address")
+      .populate({
+        path: "products.productId",
+        select: "name images",
+      });
 
-    // 5. Pending Orders
+    // 6. Pending Orders
     const pendingOrders = await Order.find({
       sellerId,
       status: { $in: ["Placed", "Dispatched"] },
     }).sort({ placedDate: -1 });
 
-    // // 6. Customer Reviews
-    // const customerReviews = await Review.find({ sellerId })
-    //   .sort({ createdAt: -1 })
-    //   .limit(5)
-    //   .populate("productId", "name")
-    //   .populate("userId", "name");
-
+    // 7. All Reviews for the Seller
+    const allReviews = await Review.aggregate([
+      {
+        $lookup: {
+          from: "products", // Join with the products collection
+          localField: "product", // Field in Review that contains product reference
+          foreignField: "_id", // Field in Product that matches
+          as: "productDetails",
+        },
+      },
+      {
+        $unwind: "$productDetails", // Unwind to get product details for each review
+      },
+      {
+        $match: {
+          "productDetails.seller": new mongoose.Types.ObjectId(sellerId), // Filter reviews for products sold by the seller
+        },
+      },
+      {
+        $project: {
+          rating: 1,
+          review: 1,
+          productId: "$product",
+          productName: "$productDetails.name",
+          productImage: { $arrayElemAt: ["$productDetails.images", 0] }, // Assuming images is an array
+        },
+      },
+    ]);
     res.status(200).json({
-      totalRevenue: totalRevenue[0]?.totalRevenue || 0,
+      revenueByDate: revenueData,
+      orderCountsByDate,
+      overallTotalRevenue,
       orderCounts,
       topSellingProducts,
       recentOrders,
       pendingOrders,
-      // customerReviews,
+      allReviews, // Send all reviews
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getOrderStats = catchAsync(async (req, res, next) => {
+  const { sellerId } = req.params;
+  const { sortType } = req.query; // Get the sorting type from the query (e.g., "year", "month", "day")
+
+  // Define date format based on sortType
+  let dateFormat;
+  if (sortType === "year") {
+    dateFormat = "%Y";
+  } else if (sortType === "month") {
+    dateFormat = "%Y-%m";
+  } else {
+    dateFormat = "%Y-%m-%d";
+  }
+
+  // 1. Total Revenue and Order Count based on date
+  const revenueAndOrderCount = await Order.aggregate([
+    {
+      $match: {
+        sellerId: new mongoose.Types.ObjectId(sellerId),
+        status: { $in: ["Placed", "Dispatched", "Delivered"] },
+      },
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: dateFormat, date: "$placedDate" } },
+        totalRevenue: { $sum: "$totalAmount" },
+        orderCount: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 }, // Sort by date in ascending order
+    },
+  ]);
+
+  // Calculate overall total revenue and order count separately (Optional)
+  const overallStats = revenueAndOrderCount.reduce(
+    (acc, curr) => {
+      acc.totalRevenue += curr.totalRevenue;
+      acc.orderCount += curr.orderCount;
+      return acc;
+    },
+    { totalRevenue: 0, orderCount: 0 }
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      revenueAndOrderCount,
+      overallStats,
+    },
+  });
+});
 
 export const updateOrders = updateOne(Order);
 export const cancelOrder = deleteOne(Order);

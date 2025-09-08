@@ -5,13 +5,19 @@ import {
   getAllReviews,
   getReview,
   updateReview,
-} from "../controllers/reviewControllers";
-import { protect } from "../controllers/authControllers";
+  getReviewsByProductId,
+  createReviewForProduct,
+  getReviewsByUserId,
+} from "../controllers/reviewControllers.js";
+import { protect } from "../controllers/authControllers.js";
 const Router = express.Router();
 
-const router = express.Router();
-router.post("/", protect, createReview);
-router.patch("/:id", protect, updateReview);
-router.get("/", protect, getAllReviews);
-router.get("/:id", protect, getReview);
-router.delete("/:id", protect, deleteReview);
+Router.post("/", protect, createReview);
+Router.patch("/:id", protect, updateReview);
+Router.get("/", protect, getAllReviews);
+Router.delete("/:id", protect, deleteReview);
+Router.get("/:productId", protect, getReviewsByProductId);
+Router.get("/user/:id", protect, getReviewsByUserId);
+Router.post("/:productId", protect, createReviewForProduct);
+
+export default Router;

@@ -6,7 +6,7 @@ const QuantityCounter = ({ quantity, onQuantityChange }) => {
   };
 
   const handleDecrease = () => {
-    if (quantity > 1) {
+    if (quantity > 0) {
       onQuantityChange(quantity - 1);
     }
   };

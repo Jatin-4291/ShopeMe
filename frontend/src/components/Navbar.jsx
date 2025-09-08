@@ -8,6 +8,7 @@ import { BsCart3 } from "react-icons/bs";
 import { FaBoxOpen } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import axios from "axios";
+import { ClipLoader } from "react-spinners"; // Import the ClipLoader
 
 function Navbar() {
   const [search, setSearch] = useState("");
@@ -15,8 +16,9 @@ function Navbar() {
   const { isAuthenticated, user, isPhoto, setIsPhoto } = useUser();
   const { setSearchProduct, cartItems, setCartItems } = useProduct();
   const [cartId, setCartId] = useState();
+  const [suggestions, setSuggestions] = useState([]); // State for search suggestions
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
-
   useEffect(() => {
     if (user === null) return;
     if (user.photo) {
@@ -43,12 +45,37 @@ function Navbar() {
     }
   }, [user, setCartItems]);
 
-  const Notification = cartItems.reduce((accumulator, item) => {
-    return accumulator + item.quantity;
-  }, 0);
+  const Notification = user
+    ? cartItems.reduce((accumulator, item) => {
+        return accumulator + item.quantity;
+      }, 0)
+    : (() => {
+        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+        return localCart.reduce((accumulator, item) => {
+          return accumulator + item.quantity;
+        }, 0);
+      })();
 
-  const handleSearchProduct = (e) => {
+  const handleSearchProduct = async (e) => {
     setSearch(e.target.value);
+
+    // Fetch product suggestions when the search input changes
+    if (e.target.value) {
+      setLoading(true); // Start loading
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/v1/product/search/${e.target.value}`
+        );
+        console.log(response.data.data.products);
+        setSuggestions(response.data.data.products); // Assuming the API returns products in this structure
+      } catch (error) {
+        console.error("Error fetching suggestions:", error.message);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    } else {
+      setSuggestions([]); // Clear suggestions when input is empty
+    }
   };
 
   const handleMouseEnter = () => {
@@ -62,16 +89,27 @@ function Navbar() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSearchProduct(search);
-    navigate("/user/productList");
+    if (user) {
+      navigate("/user/productList");
+    } else {
+      navigate("/productList");
+    }
+  };
+
+  const handleSuggestionClick = (product) => {
+    setSearch(product.name); // Set the search input to the clicked product name
+    setSearchProduct(product.name);
+    setSuggestions([]);
+    navigate(user ? "/user/productList" : "/productList");
   };
 
   return (
     <nav className="flex items-center justify-between h-16 px-4 white border border-solid shadow-md text-black">
-      <Link to="/user" className="text-3xl font-bold">
+      <Link to={user ? "/user" : "/"} className="text-3xl font-bold">
         <span className="text-violet-900">Apni</span>
         <span className="text-yellow-400">Dukan</span>
       </Link>
-      <form onSubmit={handleSubmit} className="flex">
+      <form onSubmit={handleSubmit} className="flex relative">
         <input
           onChange={handleSearchProduct}
           value={search}
@@ -80,6 +118,26 @@ function Navbar() {
           placeholder="Search for products"
         />
         <CiSearch className="w-10 h-10" />
+        {loading ? ( // Show loader when loading
+          <div className="absolute z-10 w-[600px] flex items-center justify-center h-12">
+            <ClipLoader color="#4A90E2" loading={loading} size={30} />
+          </div>
+        ) : (
+          suggestions.length > 0 && (
+            <div className="absolute z-10 w-[600px] bg-white border border-gray-300 rounded-lg shadow-lg mt-14">
+              {suggestions.map((product) => (
+                <div
+                  key={product._id}
+                  onClick={() => handleSuggestionClick(product)}
+                  className="p-4 gap-5 hover:bg-gray-100 cursor-pointer flex"
+                >
+                  <img className="w-5 h-5" src={product.images[0].url} alt="" />
+                  <p>{product.name}</p>
+                </div>
+              ))}
+            </div>
+          )
+        )}
       </form>
       {!isAuthenticated && (
         <div className="flex gap-2 items-center">
@@ -100,7 +158,7 @@ function Navbar() {
       )}
       <div className="flex gap-4">
         <Link
-          to={`/user/cart/${cartId || ""}`}
+          to={user ? `/user/cart/${cartId || ""}` : "/cart"}
           className="relative flex gap-1 bg-violet-900 text-white border rounded-lg p-2 px-3"
         >
           <BsCart3 className="w-5 h-5 mt-1" />
@@ -111,7 +169,7 @@ function Navbar() {
             </span>
           )}
         </Link>
-        {user !== null && (
+        {user != null && (
           <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -120,10 +178,11 @@ function Navbar() {
             {isPhoto ? (
               <div className="flex">
                 <img
+                  className="border border-gray-300 rounded-full object-cover w-8 h-8"
                   src={user.photo}
                   alt="Profile"
-                  className="object-cover w-8 h-8"
                 />
+
                 <span className="text-md mt-1">Profile</span>
               </div>
             ) : (
@@ -135,7 +194,7 @@ function Navbar() {
             {isHovering && (
               <div className="w-40 absolute z-10 right-2 top-full bg-white text-black shadow-lg rounded-md mb-4">
                 <Link
-                  to="/user/profile"
+                  to={user ? "/user/profile" : "/profile"}
                   className="block py-2 text-black hover:bg-gray-200"
                 >
                   <div className="flex items-center ml-2">

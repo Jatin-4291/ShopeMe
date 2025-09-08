@@ -7,6 +7,8 @@ import {
   resetPassword,
   updatePassword,
   restrictTo,
+  sendOTP,
+  verifyOTP,
 } from "../controllers/authControllers.js";
 import {
   addSellerSignature,
@@ -16,6 +18,7 @@ import {
   updateUser,
 } from "../controllers/userController.js";
 import uploadConfig from "../config/multerConfig.js";
+
 const Router = express.Router();
 Router.post("/signup", signUp);
 Router.post("/login", login);

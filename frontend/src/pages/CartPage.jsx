@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"; // Import Link
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import QuantityCounter from "../components/QuantityCounter";
 import { useState, useEffect } from "react";
@@ -7,6 +7,15 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
 import { FaPlus } from "react-icons/fa6";
+import { ClipLoader } from "react-spinners";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 function CartPage() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [products, setProducts] = useState([]);
@@ -15,22 +24,30 @@ function CartPage() {
   const { user } = useUser();
   const [error, setError] = useState(null);
   const { cartItems, setCartItems } = useProduct();
-  const { id } = useParams(); // Extract cartId from URL params
-  const Navigate = useNavigate();
+  const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       setError(null);
 
-      if (cartItems.length === 0) {
+      // Check if user is logged in
+      let currentCartItems = user
+        ? cartItems
+        : JSON.parse(localStorage.getItem("cart")) || [];
+
+      console.log(currentCartItems.length);
+
+      if (currentCartItems.length === 0) {
         setLoading(false);
         return;
       }
 
       try {
         const fetchedProducts = await Promise.all(
-          cartItems.map(async (item) => {
+          currentCartItems.map(async (item) => {
             if (!item.productId) {
               console.warn("Product ID is undefined for item:", item);
               return null;
@@ -50,6 +67,7 @@ function CartPage() {
             }
           })
         );
+        console.log(fetchProducts);
 
         const validProducts = fetchedProducts.filter(
           (product) => product !== null
@@ -76,31 +94,39 @@ function CartPage() {
     };
 
     fetchProducts();
-  }, [cartItems]); // Dependency on cartItems
+  }, [cartItems, user]);
 
   const handleQuantityChange = async (productId, newQuantity) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
       [productId]: newQuantity,
     }));
+    console.log(quantities);
 
-    const updatedCartItems = cartItems.map((item) =>
-      item.productId === productId ? { ...item, quantity: newQuantity } : item
-    );
-    setCartItems(updatedCartItems);
-
-    try {
-      const response = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/cart/${id}`,
-        {
-          items: updatedCartItems,
-        }
+    if (user) {
+      // If user is logged in, update the cartItems state and send the update to the server.
+      const updatedCartItems = cartItems.map((item) =>
+        item.productId === productId ? { ...item, quantity: newQuantity } : item
       );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error updating cart:", error);
+      setCartItems(updatedCartItems);
+
+      try {
+        await axios.patch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
+          items: updatedCartItems,
+        });
+      } catch (error) {
+        console.error("Error updating cart:", error);
+      }
+    } else {
+      // If no user is logged in, update only local storage.
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      const updatedStoredCart = storedCart.map((item) =>
+        item.productId === productId ? { ...item, quantity: newQuantity } : item
+      );
+      localStorage.setItem("cart", JSON.stringify(updatedStoredCart));
     }
 
+    // Calculate the updated total price
     const updatedTotalPrice = products.reduce(
       (acc, product) =>
         acc +
@@ -112,7 +138,7 @@ function CartPage() {
     setTotalPrice(updatedTotalPrice);
   };
 
-  const handleRemoveItem = async (productId) => {
+  const handleRemoveItem = (productId) => {
     console.log("Remove item with ID:", productId);
 
     const updatedCartItems = cartItems.filter(
@@ -121,13 +147,16 @@ function CartPage() {
 
     setCartItems(updatedCartItems);
 
-    try {
-      await axios.patch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
-        items: updatedCartItems,
-      });
-      console.log("Item removed successfully");
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
+    if (user) {
+      axios
+        .patch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
+          items: updatedCartItems,
+        })
+        .catch((error) =>
+          console.error("Error removing item from cart:", error)
+        );
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updatedCartItems));
     }
 
     const updatedProducts = products.filter(
@@ -141,31 +170,37 @@ function CartPage() {
     setProducts(updatedProducts);
     setTotalPrice(updatedTotalPrice);
   };
+
   const handlePlaceOrder = async () => {
     console.log(cartItems);
-    const order = await axios.post("http://127.0.0.1:8000/api/v1/orders/", {
-      userId: user._id,
-      products: cartItems,
-      totalAmount: totalPrice,
-    });
-    const myOrder = order.data.data;
-    console.log(myOrder);
-
-    Navigate(`/user/orders/${user._id}`);
+    if (user) {
+      try {
+        const order = await axios.post("http://127.0.0.1:8000/api/v1/orders/", {
+          userId: user._id,
+          products: cartItems,
+          totalAmount: totalPrice,
+        });
+        const myOrder = order.data.data;
+        console.log(myOrder);
+        navigate(`/user/orders/${user._id}`);
+      } catch (error) {
+        console.error("Error placing order:", error);
+      }
+    } else {
+      setIsModalOpen(true);
+    }
   };
+
   return (
     <div>
       <Navbar />
       <div className="bg-gray-200 min-h-screen p-12">
         <div className="container mx-auto flex flex-col lg:flex-row bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Cart Items */}
           <div className="flex-1 p-6">
             <h2 className="text-2xl font-bold mb-6">Your Cart</h2>
             <div className="space-y-4">
               {loading ? (
-                <div className="flex justify-center items-center h-32">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-                </div>
+                <ClipLoader color="#6B46C1" loading={loading} size={50} />
               ) : error ? (
                 <p className="text-red-500">{error}</p>
               ) : products.length === 0 ? (
@@ -205,71 +240,46 @@ function CartPage() {
             </div>
           </div>
 
-          {/* Price Details */}
-
           <div className="w-full lg:w-1/3 bg-gray-100 p-6">
-            <div className="w-full bg-gray-100 p-6">
-              <h2 className="text-xl font-bold mb-4">Address</h2>
-              {user.address ? (
-                <div className="w-full h-auto border border-b-2 mt-4 p-2 rounded-lg">
-                  <h2 className="text-lg font-semibold">Current Address</h2>
-                  <div className="flex gap-10 text-md font-semibold mt-4">
-                    <h1>
-                      {user.firstName} {user.lastName}
-                    </h1>
-                    <h1>{user.mobileNumber}</h1>
-                  </div>
-                  <p className="mt-2">
-                    {user.address.hNo},{user.address.street},{user.address.area}
-                    ,{user.address.district} {user.address.state},
-                    {user.address.pincode},{user.address.landmark}
-                  </p>
-                </div>
-              ) : (
-                <button
-                  // onClick={handleAddAddress}
-                  className="mt-2 ml-6 text-violet-900 border border-none"
-                >
-                  <Link to="/user/profile" className="flex gap-3">
-                    <span>
-                      <FaPlus className="mt-1" />
-                    </span>
-                    ADD A NEW ADDRESS
-                  </Link>
-                </button>
-              )}
-            </div>
-            <div className="w-full bg-gray-100 p-6">
-              <h2 className="text-xl font-bold mb-4">Price Details</h2>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="font-medium">Subtotal:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Shipping:</span>
-                  <span>$0.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Tax:</span>
-                  <span>$0.00</span>
-                </div>
-                <hr className="my-4" />
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
-                </div>
+            <h2 className="text-xl font-bold mb-4">Price Details</h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="font-medium">Subtotal:</span>
+                <span>${totalPrice.toFixed(2)}</span>
               </div>
-              <d
-                onClick={handlePlaceOrder}
-                className="w-full mt-6 bg-violet-900 text-white py-2 rounded-md text-center block cursor-pointer"
-              >
-                Place Order
-              </d>
+              <hr className="my-4" />
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total:</span>
+                <span>${totalPrice.toFixed(2)}</span>
+              </div>
             </div>
+            <button
+              onClick={handlePlaceOrder}
+              className="w-full mt-6 bg-violet-900 text-white py-2 rounded-md text-center block cursor-pointer"
+            >
+              Place Order
+            </button>
           </div>
         </div>
       </div>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogTrigger />
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Please Login to Order</DialogTitle>
+            <DialogDescription>
+              You must be logged in to place an order. Click the button below to
+              log in or create an account.
+            </DialogDescription>
+          </DialogHeader>
+          <Link
+            to="/login"
+            className="bg-violet-900 text-white py-2 px-4 rounded-md mt-4 block text-center"
+          >
+            Login
+          </Link>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

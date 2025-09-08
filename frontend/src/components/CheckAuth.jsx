@@ -1,9 +1,38 @@
 import { Navigate } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 function CheckAuth() {
-  const { isAuthenticated, user } = useUser();
+  const { isAuthenticated, user, setUser, setIsAuthenticated } = useUser();
+  const [googleUser, setGoogleUser] = useState(null); // Correctly defining state
+
+  useEffect(() => {
+    const getGoogleData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/login/sucess", {
+          withCredentials: true,
+        });
+        console.log(response.data.data);
+        setGoogleUser(response.data.data);
+        localStorage.setItem("user", JSON.stringify(response.data.data));
+        setIsAuthenticated(true);
+        setUser(response.data.data);
+      } catch (error) {
+        console.error("Error fetching Google user data:", error);
+      }
+    };
+
+    // Only fetch Google data if not already authenticated
+    if (!isAuthenticated) {
+      getGoogleData();
+    }
+  }, [isAuthenticated, setUser, setIsAuthenticated]); // Dependencies
+
+  console.log(user);
   console.log(isAuthenticated);
-  console.log(user.roles);
+
+  // Redirect logic based on user roles
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
@@ -20,6 +49,9 @@ function CheckAuth() {
     console.log(isAuthenticated, user.roles);
     return <Navigate to="/seller" />;
   }
+
+  // Optionally, render nothing or a loading screen if still processing authentication
+  return null;
 }
 
 export default CheckAuth;

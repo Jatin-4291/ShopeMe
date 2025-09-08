@@ -2,68 +2,201 @@ import { useProduct } from "../contexts/productContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/userContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import QuantityCounter from "../components/QuantityCounter"; // Ensure this is the correct import
+import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
 
 function Products() {
-  const { searchProduct, productId, setProductId } = useProduct();
+  const { user } = useUser();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
+  const { searchProduct, setCartItems, cartItems } = useProduct(); // Add state for search product
+  const [quantities, setQuantities] = useState({}); // State for product quantities
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
+
+  // Fetch the current quantity from cartItems for a given product
+  console.log(cartItems);
+
+  const getQuantity = (productId) => {
+    const cartItem = cartItems.find((item) => item.productId === productId);
+    return cartItem ? cartItem.quantity : 0;
+  };
 
   useEffect(() => {
     const fetchProductByName = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/search/${encodeURIComponent(
-            searchProduct
-          )}`
+          `http://127.0.0.1:8000/api/v1/product/search/${searchProduct}`
         );
+        console.log(response);
+
         setProducts(response.data.data.products);
       } catch (error) {
-        setError(error);
+        setError("Error fetching products.");
+        console.error(error);
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
-    fetchProductByName();
-  }, [searchProduct, setProducts]);
 
-  console.log(error);
-  console.log(products);
+    if (searchProduct) fetchProductByName(); // Fetch only if searchProduct is not empty
+  }, [searchProduct]);
+
   const openProduct = (product) => {
-    console.log(product);
-    setProductId(product._id);
-    console.log(productId);
-    navigate(`/user/productDetails/${product._id}`);
+    if (product && product._id) {
+      const path = user
+        ? `/user/productDetails/${product._id}`
+        : `/productDetails/${product._id}`;
+      navigate(path);
+    }
+  };
+
+  const handleQuantityChange = async (productId, newQuantity) => {
+    console.log(newQuantity);
+
+    setQuantities((prevQuantities) => {
+      console.log(prevQuantities);
+
+      const updatedQuantities = { ...prevQuantities };
+      if (newQuantity <= 0) {
+        delete updatedQuantities[productId];
+      } else {
+        updatedQuantities[productId] = newQuantity;
+      }
+      console.log(updatedQuantities);
+
+      return updatedQuantities;
+    });
+
+    if (user) {
+      const userId = user._id;
+      try {
+        if (newQuantity > 0) {
+          console.log(newQuantity);
+          const res = await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+            userId,
+            productId,
+            quantity: newQuantity,
+          });
+          console.log(res);
+        } else {
+          await axios.delete(`http://127.0.0.1:8000/api/v1/cart/${productId}`);
+        }
+
+        const updatedCartResponse = await axios.get(
+          `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
+        );
+        console.log(updatedCartResponse);
+
+        setCartItems(updatedCartResponse.data.data.cart.items);
+      } catch (error) {
+        console.error("Error updating cart:", error);
+      }
+    } else {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existingItemIndex = cart.findIndex(
+        (item) => item.productId === productId
+      );
+
+      if (newQuantity > 0) {
+        if (existingItemIndex >= 0) {
+          cart[existingItemIndex].quantity = newQuantity;
+        } else {
+          cart.push({
+            productId,
+            quantity: newQuantity,
+          });
+        }
+      } else if (existingItemIndex >= 0) {
+        cart.splice(existingItemIndex, 1);
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+  };
+
+  const handleAdd = async (productId) => {
+    if (user) {
+      const userId = user._id;
+      await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+        userId,
+        productId,
+        quantity: 1,
+      });
+      const updatedCartResponse = await axios.get(
+        `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
+      );
+      setCartItems(updatedCartResponse.data.data.cart.items);
+    } else {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({
+        productId,
+        quantity: 1,
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
   };
 
   return (
-    <div className="container mx-auto my-8 bg-white flex justify-center">
-      <div className="grid grid-cols-5 gap-4 w-4/5">
-        {products.map((product, index) => (
-          <div
-            onClick={() => openProduct(product)}
-            className="border border-solid rounded-md   p-4 "
-            key={index}
-          >
-            <div className="w-full mb-4">
-              <img
-                src={product.images[0].url}
-                alt={product.name}
-                className="w-full"
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="text-xl font-bold-md mb-2">{product.name}</div>
-              <div className="flex justify-between">
-                <div className="text-md text-center mt-1">
-                  &#8377;{product.price}
-                </div>
-                <button className="text-violet font-semibold border p-1 px-3 border-solid rounded-md hover:bg-violet-900 hover:text-white">
-                  ADD
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="w-full p-4 overflow-y-auto scrollbar flex flex-row justify-center">
+      {loading ? (
+        <div className="flex justify-center items-center w-full h-full">
+          <ClipLoader color="#6B46C1" loading={loading} size={50} />{" "}
+          {/* Spinner */}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full max-w-screen-xl">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <Card
+                key={product._id}
+                className="border border-gray-200 h-64 flex flex-col rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              >
+                <CardHeader
+                  onClick={() => openProduct(product)}
+                  className="items-center justify-center cursor-pointer flex-grow"
+                >
+                  <img
+                    src={product.images[0]?.url || ""}
+                    alt={product.name}
+                    className="w-full h-24 object-cover rounded-t-lg"
+                  />
+                  <CardTitle className="mt-2 text-sm font-semibold text-left">
+                    {product.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="flex justify-between">
+                    <p className="text-medium font-semibold">
+                      ${product.price}
+                    </p>
+                    {getQuantity(product._id) ? (
+                      <QuantityCounter
+                        quantity={getQuantity(product._id)}
+                        onQuantityChange={(newQuantity) =>
+                          handleQuantityChange(product._id, newQuantity)
+                        }
+                      />
+                    ) : (
+                      <button
+                        onClick={() => handleAdd(product._id)}
+                        className="text-violet-900 font-semibold border px-3 border-solid rounded-md hover:bg-violet-900 hover:text-white"
+                      >
+                        ADD
+                      </button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <p>No products available for this category.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

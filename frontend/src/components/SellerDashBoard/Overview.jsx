@@ -6,15 +6,21 @@ import TopSellingProductsSection from "./OverviewData/TopSellingProductsSection"
 import OrderCountsSection from "./OverviewData/OrderCountsSection";
 import RevenueSection from "./OverviewData/RevenueSection";
 import { useUser } from "../../contexts/userContext";
+import { Link } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi";
+import AllReviews from "./OverviewData/AllReviews";
+import { ClipLoader } from "react-spinners"; // Import the ClipLoader
 
 function Overview() {
   const [overviewData, setOverviewData] = useState({
-    totalRevenue: 0,
+    overallTotalRevenue: 0,
     orderCounts: [],
     topSellingProducts: [],
     recentOrders: [],
     pendingOrders: [],
-    customerReviews: [],
+    orderCountsByDate: [],
+    revenueByDate: [],
+    allReviews: [],
   });
 
   const { user } = useUser();
@@ -27,6 +33,8 @@ function Overview() {
         const response = await axios.get(
           `http://127.0.0.1:8000/api/v1/dashboard/${user._id}`
         );
+        console.log(response.data); // Log the response data
+
         setOverviewData(response.data);
       } catch (err) {
         setError(err.message);
@@ -38,35 +46,67 @@ function Overview() {
     fetchOverviewData();
   }, [user._id]);
 
-  if (loading) return <div className="text-center">Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader color="#5B21B6" loading={loading} size={50} />
+      </div>
+    ); // Display ClipLoader while loading
+
   if (error)
     return <div className="text-center text-red-500">Error: {error}</div>;
 
   const {
-    totalRevenue,
+    overallTotalRevenue,
+    revenueByDate,
     orderCounts,
     topSellingProducts,
     recentOrders,
     pendingOrders,
+    orderCountsByDate,
+    allReviews,
   } = overviewData;
 
   return (
     <div>
-      <div className="grid gap-6 p-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {/* Overview Sections */}
-        <RevenueSection totalRevenue={totalRevenue} />
-        <OrderCountsSection orderCounts={orderCounts} />
-        <TopSellingProductsSection topSellingProducts={topSellingProducts} />
-
-        {/* Custom styles for RecentOrdersSection and PendingOrdersSection */}
+      <div className="w-full h-14 shadow-md bg-white mt-2 ml-2 border rounded-lg flex justify-between">
+        <p className="text-xl text-violet-900 font-bold mt-4 ml-4">Overview</p>
+        <Link
+          to="/logout"
+          className="flex items-center gap-2 px-2 h-10 m-2 bg-red-500 text-white rounded-lg"
+        >
+          <FiLogOut />
+          Logout
+        </Link>
       </div>
-      <div className="flex">
-        <div className="col-span-1 md:col-span-2 lg:col-span-1 h-[250px] w-3/5">
-          <RecentOrdersSection recentOrders={recentOrders} />
+      <div>
+        <div className="grid gap-6 p-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {/* Overview Sections */}
+          <RevenueSection
+            overallTotalRevenue={overallTotalRevenue}
+            revenueByDate={revenueByDate}
+          />
+          <OrderCountsSection
+            orderCounts={orderCounts}
+            orderCountsByDate={orderCountsByDate}
+          />
+          <TopSellingProductsSection topSellingProducts={topSellingProducts} />
         </div>
-
-        <div className="col-span-1 md:col-span-2 lg:col-span-1  w-3/5">
-          <PendingOrdersSection pendingOrders={pendingOrders} />
+        <div className="flex flex-col md:flex-row">
+          <div className="flex-1 md:w-2/3">
+            {/* Container for Recent Orders */}
+            <RecentOrdersSection recentOrders={recentOrders} />
+          </div>
+          <div className="flex flex-col md:flex-row flex-1 md:w-1/3">
+            <div className="flex-1 h-full">
+              {/* Make this container full height */}
+              <PendingOrdersSection pendingOrders={pendingOrders} />
+            </div>
+            <div className="flex-1 h-full">
+              {/* Make this container full height */}
+              <AllReviews allReviews={allReviews} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

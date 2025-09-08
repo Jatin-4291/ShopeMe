@@ -5,8 +5,10 @@ import {
   deleteProduct,
   getAllProduct,
   getProductByID,
-  getProductByName,
+  searchProducts,
+  getProductsByCategoryId,
   updateProduct,
+  scrapeProducts,
 } from "../controllers/productController.js";
 import { getProductCatalogue } from "../controllers/userController.js";
 import { protect, restrictTo } from "../controllers/authControllers.js";
@@ -18,9 +20,11 @@ Router.post(
   uploadConfig.uploadProductImages.array("images", 10),
   createProduct
 );
+Router.get("/scrapProducts/:productName", scrapeProducts);
 Router.get("/getAll", protect, restrictTo("admin"), getAllProduct);
-Router.get("/:id", protect, getProductByID);
-Router.get("/search/:name", protect, getProductByName);
+Router.get("/:id", getProductByID);
+Router.get("/search/:query", searchProducts);
+Router.get("/categoryproducts/:id", getProductsByCategoryId);
 Router.get("/", protect, restrictTo("seller"), getProductCatalogue);
 Router.patch(
   "/:id",
