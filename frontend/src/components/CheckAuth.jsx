@@ -6,11 +6,13 @@ import { useState, useEffect } from "react";
 function CheckAuth() {
   const { isAuthenticated, user, setUser, setIsAuthenticated } = useUser();
   const [setGoogleUser] = useState(null); // Correctly defining state
+    const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
   useEffect(() => {
     const getGoogleData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/login/sucess", {
+         const response = await axios.get(`${backendUrl}/login/sucess`, {
           withCredentials: true,
         });
         console.log(response.data.data);
