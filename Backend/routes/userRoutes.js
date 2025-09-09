@@ -7,8 +7,6 @@ import {
   resetPassword,
   updatePassword,
   restrictTo,
-  sendOTP,
-  verifyOTP,
 } from "../controllers/authControllers.js";
 import {
   addSellerSignature,
