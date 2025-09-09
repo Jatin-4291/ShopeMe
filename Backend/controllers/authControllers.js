@@ -3,18 +3,12 @@ import { promisify } from "util";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import { LocalStorage } from "node-localstorage";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/appError.js";
 import sendEmail from "../utils/email.js";
 import crypto from "crypto";
-import twilio from "twilio";
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-console.log(accountSid, accountSid);
-
-const client = twilio(accountSid, authToken);
 
 const localStorage = new LocalStorage("./scratch");
 const signToken = (id) => {
@@ -35,54 +29,6 @@ const createSendToken = (user, statusCode, res) => {
     },
   });
 };
-
-const otpStore = {}; // Temporary storage, use Redis or similar in production
-
-export const sendOTP = catchAsync(async (req, res, next) => {
-  const { mobileNumber } = req.body;
-  console.log(mobileNumber);
-
-  // Generate a 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000);
-  console.log(process.env.TWILIO_MOBILE_NUMBER, mobileNumber);
-
-  try {
-    client.verify.v2
-      .services("VA8cc52f1565618a194dc50d45f3b52ef8")
-      .verifications.create({ to: "+918287423912", channel: "sms" })
-      .then((verification) => console.log(verification.sid));
-
-    otpStore[mobileNumber] = {
-      otp,
-      expiresAt: Date.now() + 5 * 60 * 1000, // OTP expires in 5 minutes
-    };
-    console.log(otpStore);
-
-    res.status(200).json({
-      status: "success",
-      message: "OTP sent successfully",
-    });
-  } catch (error) {
-    return next(new AppError("Error sending OTP", 500));
-  }
-});
-export const verifyOTP = catchAsync(async (req, res, next) => {
-  const { otp, mobileNumber } = req.body;
-  const storedOTP = otpStore[mobileNumber];
-  if (!storedOTP || storedOTP.expiresAt < Date.now()) {
-    return next(
-      new AppError("OTP has expired. Please request a new one.", 400)
-    );
-  }
-  if (storedOTP.otp !== otp) {
-    return next(new AppError("Invalid OTP", 400));
-  }
-  delete otpStore[mobileNumber];
-  res.status(200).json({
-    status: "success",
-    message: "OTP verified successfully!",
-  });
-});
 
 export const signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
