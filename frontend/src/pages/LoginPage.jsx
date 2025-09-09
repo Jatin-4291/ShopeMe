@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 import GoogleLogo from "../assets/Google-icon.webp"; // Path to the Google logo image
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -50,7 +51,7 @@ function LoginPage() {
     }
   };
   const handleGoogleLogin = () => {
-    window.open("http://localhost:8000/auth/google/callback", "_self");
+    window.open(`${backendUrl}/auth/google/callback`, "_self");
   };
   return (
     <>
