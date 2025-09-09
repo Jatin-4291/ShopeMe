@@ -3,7 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import User from "../Models/userModels.js";
 import Product from "../Models/productModels.js";
 import { deleteOne, updateOne } from "./handlerFactory.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/appError.js";
 import Review from "../Models/reviewModels.js";
 import mongoose from "mongoose";
 
