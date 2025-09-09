@@ -4,6 +4,7 @@ import isEmail from "validator/lib/isEmail";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
+console.log("hello");
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
