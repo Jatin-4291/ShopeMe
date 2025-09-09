@@ -1,6 +1,6 @@
 // controllers/productController.js
 import Product from "../Models/productModels.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/appError.js";
 import catchAsync from "../utils/catchAsync.js";
 import {
   getAll,
