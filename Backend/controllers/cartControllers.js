@@ -1,7 +1,7 @@
 import Cart from "../Models/cartModels.js";
 import { createOne, deleteOne, updateOne, getOne } from "./handlerFactory.js";
 import catchAsync from "../utils/catchAsync.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/appError.js";
 import Product from "../Models/productModels.js";
 
 export const updateCart = updateOne(Cart);
