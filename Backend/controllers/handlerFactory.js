@@ -1,5 +1,5 @@
 import { ApiFeatures } from "../utils/apiFeatures.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/appError.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const getOne = (Model) =>
