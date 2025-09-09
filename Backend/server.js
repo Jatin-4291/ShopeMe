@@ -7,7 +7,6 @@ import passport from "passport";
 import { Strategy } from "passport-google-oauth2";
 import User from "./Models/userModels.js";
 import jwt from "jsonwebtoken";
-import AccessToken from "twilio/lib/jwt/AccessToken.js";
 const oauth2Stratergy = Strategy;
 app.use(
   cors({
