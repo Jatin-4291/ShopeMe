@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import AppError from "./utils/AppError.js";
+import AppError from "./utils/appError.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
