@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 function BankDetails({ onComplete }) {
   const { user, setUser } = useUser();
 

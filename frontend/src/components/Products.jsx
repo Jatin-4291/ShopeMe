@@ -1,5 +1,5 @@
 import { useProduct } from "../contexts/productContext";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/userContext";

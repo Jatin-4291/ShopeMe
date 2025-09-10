@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
 
 function ProductsInfo({ productId }) {

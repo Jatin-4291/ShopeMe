@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal"; // Import the modal component
-import api from "../utils/api";
+import api from "../utils/api.js";
 function DisplayOrders({ filter, orders }) {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);

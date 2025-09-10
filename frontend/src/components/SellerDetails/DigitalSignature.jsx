@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useUser } from "../../contexts/userContext";
 
 function DigitalSignature({ onComplete }) {

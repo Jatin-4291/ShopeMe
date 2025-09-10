@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CgDanger } from "react-icons/cg";
 import isEmail from "validator/lib/isEmail";
-import api from "../utils/api";
+import api from "../utils/api.js";
 import toast, { Toaster } from "react-hot-toast";
 
 console.log("hello");

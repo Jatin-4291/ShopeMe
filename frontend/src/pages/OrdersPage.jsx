@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../utils/api";
+import api from "../utils/api.js";
 import { useUser } from "../contexts/userContext";
 import Navbar from "../components/Navbar";
 import DisplayOrders from "../components/DisplayOrders";

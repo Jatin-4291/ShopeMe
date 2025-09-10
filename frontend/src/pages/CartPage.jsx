@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import QuantityCounter from "../components/QuantityCounter";
 import { useState, useEffect } from "react";
 import { useProduct } from "../contexts/productContext";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
 import { ClipLoader } from "react-spinners";

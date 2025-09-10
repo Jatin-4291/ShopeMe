@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react";
-import api from "../../../utils/api";
+import api from "../../../utils/api.js";
 import ProgressBar from "@ramonak/react-progress-bar";
 import ReviewModal from "./ReviewModal"; // Import the ReviewModal
 import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useUser } from "../../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import PendingOrdersSection from "./OverviewData/PendingOrdersSection";
 import RecentOrdersSection from "./OverviewData/RecentOrdersSection";
 import TopSellingProductsSection from "./OverviewData/TopSellingProductsSection";

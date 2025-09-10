@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import api from "../../../../utils/api";
+import api from "../../../../utils/api.js";
 import {
   Table,
   TableBody,

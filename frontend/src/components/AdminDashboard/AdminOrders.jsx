@@ -1,4 +1,4 @@
-import api from "../../../utils/api";
+import api from "../../../utils/api.js";
 import { useEffect, useState } from "react";
 import SearchSortOrders from "../SellerDashBoard/SearchSortOrders";
 import OrderDetailsModal from "../SellerDashBoard/OrderDetailsModal";

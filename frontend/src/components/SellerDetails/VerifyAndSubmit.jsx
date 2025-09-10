@@ -1,4 +1,4 @@
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useUser } from "../../contexts/userContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

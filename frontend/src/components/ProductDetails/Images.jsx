@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useSwipeable } from "react-swipeable";
 import { useProduct } from "../../contexts/productContext";
 import { useUser } from "../../contexts/userContext";

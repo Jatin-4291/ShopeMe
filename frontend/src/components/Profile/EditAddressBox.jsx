@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useUser } from "../../contexts/userContext";
 function EditAddressBox({ setDisplayAddressBox }) {
   const { user, setUser } = useUser();

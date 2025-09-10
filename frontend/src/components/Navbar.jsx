@@ -8,7 +8,7 @@ import { BsCart3 } from "react-icons/bs";
 import { FaBoxOpen } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { ClipLoader } from "react-spinners"; // Import the ClipLoader
-import api from "../utils/api";
+import api from "../utils/api.js";
 function Navbar() {
   const [search, setSearch] = useState("");
   const [isHovering, setIsHovering] = useState(false);

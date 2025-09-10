@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../utils/api";
+import api from "../utils/api.js";
 import { useParams } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 function ResetPassword() {

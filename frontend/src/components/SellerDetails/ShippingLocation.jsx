@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 function ShippingLocation({ onComplete }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import ClipLoader from "react-spinners/ClipLoader";
 
 function NameEdit() {

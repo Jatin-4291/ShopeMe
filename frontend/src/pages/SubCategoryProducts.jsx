@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import api from "../../utils/api.js";
 import { useProduct } from "../contexts/productContext";
 // Import necessary components (adjust imports based on your actual component library or code)
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
