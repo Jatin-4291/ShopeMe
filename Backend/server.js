@@ -12,7 +12,7 @@ dotenv.config({ path: "./.env" });
 const frontendURL = process.env.FRONTEND_URL;
 const allowedOrigins = [
   "http://localhost:5173", // dev
-  process.env.FRONTEND_URL, // production
+  "https://apni-dukan-sandy.vercel.app", // production
 ];
 app.use(
   cors({
