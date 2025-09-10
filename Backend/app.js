@@ -18,7 +18,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173", // dev
-  process.env.FRONTEND_URL, // production
+  "https://apni-dukan-sandy.vercel.app", // production
 ];
 
 app.use(
