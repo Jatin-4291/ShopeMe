@@ -7,7 +7,7 @@ import AdminTopSeller from "./AdminOverview/AdminTopSeller";
 import AdminTopProducts from "./AdminOverview/AdminTopProducts";
 import SalesByState from "./AdminOverview/SalesByState";
 import OverviewNav from "./AdminOverview/OverviewNav";
-import api from "../../../utils/api.js";
+import api from "../../../utils/api";
 
 function AdminOverview() {
   const [adminStats, setAdminStats] = useState({});

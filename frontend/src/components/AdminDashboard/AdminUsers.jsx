@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../../../utils/api.js";
+import api from "../../../utils/api";
 import {
   Table,
   TableBody,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../../utils/api.js";
+import api from "../../../utils/api";
 import { useUser } from "../../contexts/userContext";
 import ClipLoader from "react-spinners/ClipLoader";
 
