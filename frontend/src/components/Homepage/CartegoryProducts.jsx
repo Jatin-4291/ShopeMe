@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../../utils/api.js";
+import api from "../../../utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import ShadCN card components
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/userContext";

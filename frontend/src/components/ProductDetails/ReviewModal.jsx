@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useState } from "react";
-import api from "../../utils/api.js";
+import api from "../../../utils/api";
 import ReactStars2 from "react-stars";
 function ReviewModal({ productId, onClose }) {
   const [rating, setRating] = useState(5);
