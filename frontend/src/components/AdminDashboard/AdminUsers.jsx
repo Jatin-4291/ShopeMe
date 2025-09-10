@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import {
   Table,
   TableBody,
@@ -22,9 +22,7 @@ function AdminUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(
-          `http://127.0.0.1:8000/api/v1/users?page=${page}&limit=7`
-        );
+        const res = await api.get(`/users?page=${page}&limit=7`);
         setUsers(res.data.data.doc); // Use res.data.data.doc to access users
         setTotalPages(res.data.totalPages); // Update totalPages
       } catch (err) {
@@ -37,7 +35,7 @@ function AdminUsers() {
   // Delete a user
   const deleteUser = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/v1/users/${id}`);
+      await api.delete(`/users/${id}`);
       setUsers(users.filter((user) => user._id !== id));
     } catch (err) {
       console.error("Error deleting user:", err);
@@ -52,10 +50,7 @@ function AdminUsers() {
   // Save the edited user and return to normal view
   const handleSave = async () => {
     try {
-      await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${editUser._id}`,
-        editUser
-      );
+      await api.patch(`/users/${editUser._id}`, editUser);
       setUsers(
         users.map((user) => (user._id === editUser._id ? editUser : user))
       );

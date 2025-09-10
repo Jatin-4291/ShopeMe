@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
+import api from "../../utils/api";
 import { useUser } from "../../contexts/userContext";
 function EditAddressBox({ setDisplayAddressBox }) {
   const { user, setUser } = useUser();
@@ -29,10 +29,7 @@ function EditAddressBox({ setDisplayAddressBox }) {
     e.preventDefault();
     console.log("Address submitted:", address);
     try {
-      const { data } = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${id}`,
-        { address }
-      );
+      const { data } = await api.patch(`/users/${id}`, { address });
       console.log(data.data.data); // This should log the response data
       setDisplayAddressBox(false);
       setUser(data.data.data);

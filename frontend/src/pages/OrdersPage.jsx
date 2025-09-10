@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useUser } from "../contexts/userContext";
 import Navbar from "../components/Navbar";
 import DisplayOrders from "../components/DisplayOrders";
@@ -19,9 +19,7 @@ function OrdersPage() {
       setError(null);
 
       try {
-        const { data } = await axios.get(
-          `http://127.0.0.1:8000/api/v1/orders/getOrder/${user._id}`
-        );
+        const { data } = await api.get(`/orders/getOrder/${user._id}`);
         setOrders(data.data.orders);
         setFilteredOrders(data.data.orders);
       } catch (error) {

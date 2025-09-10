@@ -7,15 +7,15 @@ import AdminTopSeller from "./AdminOverview/AdminTopSeller";
 import AdminTopProducts from "./AdminOverview/AdminTopProducts";
 import SalesByState from "./AdminOverview/SalesByState";
 import OverviewNav from "./AdminOverview/OverviewNav";
+import api from "../../../utils/api";
 
-import axios from "axios";
 function AdminOverview() {
   const [adminStats, setAdminStats] = useState({});
   const [filteredStats, setFilteredStats] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/v1/admin/");
+        const response = await api.get("/admin/");
         console.log(response.data.data);
         setAdminStats(response.data.data);
         setFilteredStats(response.data.data);

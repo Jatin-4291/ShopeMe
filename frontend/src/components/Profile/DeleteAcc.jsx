@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUser } from "../../contexts/userContext";
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 function DeleteAcc() {
   const { user, isAuthenticated } = useUser();
@@ -16,9 +16,7 @@ function DeleteAcc() {
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.delete(
-        `http://127.0.0.1:8000/api/v1/users/${id}`
-      );
+      const { data } = await api.delete(`/users/${id}`);
       console.log(data.data.data); // This should log the response data
       setShowModal(false); // Close the modal on successful delete
     } catch (error) {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../utils/api";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners"; // Import the ClipLoader
 import {
@@ -26,7 +26,7 @@ function OrdersForSeller() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/v1/orders");
+        const response = await api.get("/orders");
         setOrders(response.data.data.orders);
         setFilteredOrders(response.data.data.orders);
       } catch (error) {

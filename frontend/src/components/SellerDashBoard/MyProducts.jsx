@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import {
   Table,
   TableBody,
@@ -34,9 +34,7 @@ function MyProducts() {
   useEffect(() => {
     const getSellerProductsList = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/product/"
-        );
+        const response = await api.get("/product/");
         setProducts(response.data.data.products);
         setLoading(false);
       } catch (error) {
@@ -69,7 +67,7 @@ function MyProducts() {
         ? Number(newPrice[product._id])
         : product.price;
 
-      await axios.patch(`http://127.0.0.1:8000/api/v1/product/${product._id}`, {
+      await api.patch(`/product/${product._id}`, {
         stock: updatedStock,
         price: updatedPrice,
       });
@@ -104,7 +102,7 @@ function MyProducts() {
 
   const handleDeleteClick = async (productId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/v1/product/${productId}`);
+      await api.delete(`/product/${productId}`);
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== productId)
       );

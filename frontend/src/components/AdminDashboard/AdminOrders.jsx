@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../utils/api";
 import { useEffect, useState } from "react";
 import SearchSortOrders from "../SellerDashBoard/SearchSortOrders";
 import OrderDetailsModal from "../SellerDashBoard/OrderDetailsModal";
@@ -13,9 +13,7 @@ function OrdersForSeller() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/orders/allOrders"
-        );
+        const response = await api.get("/orders/allOrders");
         setOrders(response.data.data.orders);
         setFilteredOrders(response.data.data.orders);
         console.log(response.data.data.orders);

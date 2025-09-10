@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ConfirmationModal from "./ConfirmationModal"; // Import the modal component
-
+import api from "../utils/api";
 function DisplayOrders({ filter, orders }) {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,12 +31,9 @@ function DisplayOrders({ filter, orders }) {
     if (!orderToCancel) return;
 
     try {
-      await axios.patch(
-        `http://127.0.0.1:8000/api/v1/orders/${orderToCancel._id}`,
-        {
-          status: "Cancelled",
-        }
-      );
+      await api.patch(`/orders/${orderToCancel._id}`, {
+        status: "Cancelled",
+      });
 
       setFilteredOrders((prevOrders) =>
         prevOrders.map((o) =>

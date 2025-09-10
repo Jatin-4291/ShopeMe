@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import axios from "axios";
+import api from "../../utils/api";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -50,8 +50,8 @@ const Analytics = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/dashboard/analytics/${user._id}?year=${year}&sortType=${sortType}`
+        const response = await api.get(
+          `/dashboard/analytics/${user._id}?year=${year}&sortType=${sortType}`
         ); // Replace with your actual API endpoint
 
         setData(response.data.data.revenueAndOrderCount); // Assuming your API returns { success: true, data: [...] }

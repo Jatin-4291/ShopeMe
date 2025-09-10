@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../../utils/api";
 import {
   Table,
   TableBody,
@@ -21,9 +21,7 @@ function VerifySellers() {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const res = await axios.get(
-          `http://127.0.0.1:8000/api/v1/admin/unverified`
-        );
+        const res = await api.get("/admin/unverified");
         setSellers(res.data.data.sellers || []); // Ensure empty array fallback
         setTotalSellers(res.data.data.totalSellers);
         setLoading(false); // Turn off loading state after fetching data
@@ -37,13 +35,10 @@ function VerifySellers() {
 
   const handleVerify = async (sellerId) => {
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${sellerId}`,
-        {
-          isSellerAprooved: true,
-          roles: "seller",
-        }
-      );
+      const res = await api.patch(`/users/${sellerId}`, {
+        isSellerAprooved: true,
+        roles: "seller",
+      });
       // Update the state to reflect that the seller is verified
       setSellers((prevSellers) =>
         prevSellers.map((seller) =>

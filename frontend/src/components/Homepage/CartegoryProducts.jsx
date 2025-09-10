@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import ShadCN card components
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/userContext";
@@ -13,9 +13,7 @@ function CategoryProducts() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/categories/parents"
-        );
+        const response = await api.get("/categories/parents");
         const parents = response.data.data;
         setParentCategories(parents); // Set the parent categories data
 
@@ -31,9 +29,7 @@ function CategoryProducts() {
   // Fetch child elements for each parent category
   const fetchChildElements = async (parentId) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/categories/${parentId}`
-      );
+      const response = await api.get(`/categories/${parentId}`);
       setChildElements((prev) => ({
         ...prev,
         [parentId]: response.data.data, // Add child elements for the specific parent

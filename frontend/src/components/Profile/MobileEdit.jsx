@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useUser } from "../../contexts/userContext";
 import ClipLoader from "react-spinners/ClipLoader";
 
@@ -23,10 +23,7 @@ function MobileEdit() {
     e.preventDefault();
     setIsLoading(true); // Start loading
     try {
-      const { data } = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${id}`,
-        { mobileNumber }
-      );
+      const { data } = await api.patch(`/users/${id}`, { mobileNumber });
       console.log(data.data.data); // This should log the response data
       setUser(data.data.data); // Update the user context with the new data
       setIsEdit(false); // Exit edit mode

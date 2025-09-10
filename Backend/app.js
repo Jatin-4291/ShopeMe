@@ -10,11 +10,15 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import homepageRoutes from "./routes/homepageRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
-import passport from "passport";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./.env" });
+
+const frontendURL = process.env.FRONTEND_URL;
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: frontendURL,
     methods: "GET,POST,PUT,PATCH,DELETE",
     credentials: true,
   })

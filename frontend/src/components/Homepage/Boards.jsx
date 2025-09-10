@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../utils/api";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,7 +14,7 @@ import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader from re
 
 function Boards() {
   const [boards, setBoards] = useState([]); // Set initial state as an array
-  const [currentIndex, setCurrentIndex] = useState(0); // Add currentIndex state
+  const [setCurrentIndex] = useState(0); // Add currentIndex state
   const [isLoading, setIsLoading] = useState(true); // Loading state for data fetching
   const navigate = useNavigate(); // Correct usage of useNavigate
   const { user } = useUser();
@@ -22,9 +22,7 @@ function Boards() {
   useEffect(() => {
     const fetchBoards = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/homepage/boards"
-        );
+        const response = await api.get("/homepage/boards");
         setBoards(response.data.data.doc);
         setIsLoading(false); // Set loading to false after data is fetched
       } catch (error) {

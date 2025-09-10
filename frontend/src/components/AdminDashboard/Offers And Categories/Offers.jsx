@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../../utils/api";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -40,12 +40,8 @@ function Offers() {
     const fetchBoardsAndProducts = async () => {
       setLoading(true); // Set loading true when fetching data
       try {
-        const resBoards = await axios.get(
-          "http://127.0.0.1:8000/api/v1/homepage/boards"
-        );
-        const resProducts = await axios.get(
-          "http://127.0.0.1:8000/api/v1/product/getAll"
-        );
+        const resBoards = await api.get("/homepage/boards");
+        const resProducts = await api.get("/product/getAll");
         setBoards(resBoards.data.data.doc);
         setProducts(resProducts.data.data.doc);
       } catch (err) {
@@ -61,9 +57,7 @@ function Offers() {
   const deleteBoard = async (boardId) => {
     setLoading(true);
     try {
-      await axios.delete(
-        `http://127.0.0.1:8000/api/v1/admin/boards/${boardId}`
-      );
+      await api.delete(`/admin/boards/${boardId}`);
       setBoards(boards.filter((board) => board._id !== boardId));
     } catch (err) {
       console.error("Error deleting board:", err);
@@ -84,11 +78,9 @@ function Offers() {
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/v1/admin/boards",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      const res = await api.post("/admin/boards", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setBoards([...boards, res.data.data.doc]);
       setSelectedImage(null);
       setSelectedProduct("");

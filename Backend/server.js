@@ -1,20 +1,15 @@
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import app from "./app.js";
-import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-google-oauth2";
 import User from "./Models/userModels.js";
-import jwt from "jsonwebtoken";
 const oauth2Stratergy = Strategy;
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: "GET,POST,PUT,DELETE,PATCH",
-    credentials: true,
-  })
-);
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./.env" });
+
+const frontendURL = process.env.FRONTEND_URL;
 process.on("uncaughtException", (err) => {
   console.log(err.name, err.message);
   console.log("Unhandled Exception!");
@@ -90,8 +85,8 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:5173/redirect",
-    failureRedirect: "http://localhost:5173/login",
+    successRedirect: `${frontendURL}/redirect`,
+    failureRedirect: `${frontendURL}/login`,
   })
 );
 app.get("/login/sucess", async (req, res) => {

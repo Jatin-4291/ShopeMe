@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/api";
 import { useUser } from "../../contexts/userContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,12 +14,9 @@ function VerifyAndSubmit() {
   const handleSubmit = async () => {
     setIsLoading(true); // Start loading
     try {
-      const response = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${user._id}`,
-        {
-          isSellerApproved,
-        }
-      );
+      const response = await api.patch(`/users/${user._id}`, {
+        isSellerApproved,
+      });
       setUser(response.data.data.data);
 
       // Show success toast

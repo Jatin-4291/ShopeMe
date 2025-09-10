@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CgDanger } from "react-icons/cg";
 import isEmail from "validator/lib/isEmail";
-import axios from "axios";
+import api from "../utils/api";
 import toast, { Toaster } from "react-hot-toast";
 
 console.log("hello");
@@ -26,10 +26,7 @@ function ForgotPassword() {
     }
 
     try {
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/users/forgotpassword",
-        { email }
-      );
+      const { data } = await api.post("/users/forgotpassword", { email });
       console.log(data);
       toast.success("Password reset link sent! Check your email.");
     } catch (error) {

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useCategory } from "../../contexts/categoriesContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,9 +37,7 @@ function AddProducts() {
   useEffect(() => {
     const fetchParentCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/categories/parents"
-        );
+        const response = await api.get("/categories/parents");
         setParentCategories(response.data.data);
         setIsParentCategoriesLoaded(true);
       } catch (error) {
@@ -55,9 +53,7 @@ function AddProducts() {
       if (!selectedParentCategory) return;
 
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/categories/${selectedParentCategory}`
-        );
+        const response = await api.get(`/categories/${selectedParentCategory}`);
         setChildCategories(response.data.data);
         setIsChildCategoriesLoaded(true);
       } catch (error) {
@@ -91,7 +87,7 @@ function AddProducts() {
     formData.append("brand", brand);
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/v1/products/", formData, {
+      await api.post("/products/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       resetForm();

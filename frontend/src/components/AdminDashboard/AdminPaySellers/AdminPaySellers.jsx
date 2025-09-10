@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../../utils/api";
 import {
   Table,
   TableBody,
@@ -27,8 +27,8 @@ function AdminPaySellers() {
     async (page) => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `http://127.0.0.1:8000/api/v1/admin/payseller?page=${page}&limit=${limit}&search=${searchQuery}&sort=${sortOrder}`
+        const res = await api.get(
+          `/admin/payseller?page=${page}&limit=${limit}&search=${searchQuery}&sort=${sortOrder}`
         );
         setSellers(res.data.data.sellers);
         setTotalSellers(res.data.data.totalSellers);

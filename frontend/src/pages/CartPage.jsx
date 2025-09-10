@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import QuantityCounter from "../components/QuantityCounter";
 import { useState, useEffect } from "react";
 import { useProduct } from "../contexts/productContext";
-import axios from "axios";
+import api from "../../utils/api";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
 import { ClipLoader } from "react-spinners";
@@ -52,9 +52,7 @@ function CartPage() {
               return null;
             }
             try {
-              const { data } = await axios.get(
-                `http://127.0.0.1:8000/api/v1/product/${item.productId}`
-              );
+              const { data } = await api.get(`/product/${item.productId}`);
               return { ...data.data.doc, quantity: item.quantity };
             } catch (error) {
               console.error(
@@ -110,7 +108,7 @@ function CartPage() {
       setCartItems(updatedCartItems);
 
       try {
-        await axios.patch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
+        await api.patch(`/cart/${id}`, {
           items: updatedCartItems,
         });
       } catch (error) {
@@ -147,8 +145,8 @@ function CartPage() {
     setCartItems(updatedCartItems);
 
     if (user) {
-      axios
-        .patch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
+      api
+        .patch(`/cart/${id}`, {
           items: updatedCartItems,
         })
         .catch((error) =>
@@ -174,7 +172,7 @@ function CartPage() {
     console.log(cartItems);
     if (user) {
       try {
-        const order = await axios.post("http://127.0.0.1:8000/api/v1/orders/", {
+        const order = await api.post("/orders/", {
           userId: user._id,
           products: cartItems,
           totalAmount: totalPrice,

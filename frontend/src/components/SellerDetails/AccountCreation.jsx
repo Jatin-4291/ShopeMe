@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import axios from "axios";
+import api from "../../utils/api";
 
 function AccountCreation({ onComplete }) {
   const { user, setUser } = useUser();
@@ -31,10 +31,7 @@ function AccountCreation({ onComplete }) {
     e.preventDefault();
     setLoading(true); // Start loading
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${user._id}`,
-        formData
-      );
+      const res = await api.patch(`/users/${user._id}`, formData);
       setUser(res.data.data.data);
       setSuccessMessage("Account updated successfully");
       setErrorMessage(null);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
-import axios from "axios";
+import api from "../../utils/api";
 import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
 
 function ProductsInfo({ productId }) {
@@ -15,9 +15,7 @@ function ProductsInfo({ productId }) {
   useEffect(() => {
     const getProductById = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/${productId}`
-        );
+        const response = await api.get(`/product/${productId}`);
         const data = response.data.data.doc;
         setProduct(data);
       } catch (error) {

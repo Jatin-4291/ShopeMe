@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useUser } from "../../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -24,9 +24,7 @@ function ReviewsAndRating() {
         }
 
         // Fetch reviews using the user ID
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/review/user/${user._id}`
-        );
+        const response = await api.get(`/review/user/${user._id}`);
 
         // Update state with the fetched reviews
         setReviews(response.data.data.reviews);

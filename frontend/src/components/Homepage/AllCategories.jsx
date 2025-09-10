@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import ShadCN card components
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/userContext";
@@ -12,9 +12,7 @@ function AllCategories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/categories/parents"
-        );
+        const response = await api.get("/categories/parents");
         setParentCategories(response.data.data); // Fetch and set categories data
       } catch (error) {
         console.error("Error fetching categories:", error);

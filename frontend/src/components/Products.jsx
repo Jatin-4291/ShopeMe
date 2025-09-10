@@ -1,5 +1,5 @@
 import { useProduct } from "../contexts/productContext";
-import axios from "axios";
+import api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
@@ -28,9 +28,7 @@ function Products() {
     const fetchProductByName = async () => {
       setLoading(true); // Start loading
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/search/${searchProduct}`
-        );
+        const response = await api.get(`/product/search/${searchProduct}`);
         console.log(response);
 
         setProducts(response.data.data.products);
@@ -76,19 +74,17 @@ function Products() {
       try {
         if (newQuantity > 0) {
           console.log(newQuantity);
-          const res = await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+          const res = await api.post(`/cart/`, {
             userId,
             productId,
             quantity: newQuantity,
           });
           console.log(res);
         } else {
-          await axios.delete(`http://127.0.0.1:8000/api/v1/cart/${productId}`);
+          await api.delete(`/cart/${productId}`);
         }
 
-        const updatedCartResponse = await axios.get(
-          `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-        );
+        const updatedCartResponse = await api.get(`/cart/user/${userId}`);
         console.log(updatedCartResponse);
 
         setCartItems(updatedCartResponse.data.data.cart.items);
@@ -121,14 +117,12 @@ function Products() {
   const handleAdd = async (productId) => {
     if (user) {
       const userId = user._id;
-      await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+      await api.post(`/cart/`, {
         userId,
         productId,
         quantity: 1,
       });
-      const updatedCartResponse = await axios.get(
-        `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-      );
+      const updatedCartResponse = await api.get(`/cart/user/${userId}`);
       setCartItems(updatedCartResponse.data.data.cart.items);
     } else {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];

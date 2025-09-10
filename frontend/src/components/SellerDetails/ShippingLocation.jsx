@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import axios from "axios";
-
+import api from "../../utils/api";
 function ShippingLocation({ onComplete }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -32,8 +31,8 @@ function ShippingLocation({ onComplete }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${user._id}`,
+      const res = await api.patch(
+        `/users/${user._id}`,
         { address: formData } // Update only BankDetails field
       );
       setUser(res.data.data.data);

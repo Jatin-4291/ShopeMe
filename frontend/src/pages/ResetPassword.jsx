@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useParams } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 function ResetPassword() {
@@ -15,13 +15,10 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/resetPassword/${token}`,
-        {
-          password,
-          passwordConfirm: confirmPassword,
-        }
-      );
+      const response = await api.patch(`/users/resetPassword/${token}`, {
+        password,
+        passwordConfirm: confirmPassword,
+      });
       console.log(response);
       toast.success("Password has been reset successfully");
     } catch (error) {

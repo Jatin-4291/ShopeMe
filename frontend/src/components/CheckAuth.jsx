@@ -1,18 +1,18 @@
 import { Navigate } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
-import axios from "axios";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function CheckAuth() {
   const { isAuthenticated, user, setUser, setIsAuthenticated } = useUser();
   const [setGoogleUser] = useState(null); // Correctly defining state
-    const backendUrl =
+  const backendUrl =
     import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
   useEffect(() => {
     const getGoogleData = async () => {
       try {
-         const response = await axios.get(`${backendUrl}/login/sucess`, {
+        const response = await axios.get(`${backendUrl}/login/sucess`, {
           withCredentials: true,
         });
         console.log(response.data.data);
@@ -29,7 +29,7 @@ function CheckAuth() {
     if (!isAuthenticated) {
       getGoogleData();
     }
-  }, [isAuthenticated, setUser, setIsAuthenticated, setGoogleUser]); // Dependencies
+  }, [isAuthenticated, setUser, setIsAuthenticated, setGoogleUser, backendUrl]); // Dependencies
 
   console.log(user);
   console.log(isAuthenticated);

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
-import axios from "axios"; // Make sure axios is installed
+import api from "../../utils/api";
 import { useUser } from "../../contexts/userContext";
 
 function DigitalSignature({ onComplete }) {
@@ -38,8 +38,8 @@ function DigitalSignature({ onComplete }) {
 
     try {
       // Post the form data to your backend
-      const response = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/signature/${user._id}`,
+      const response = await api.patch(
+        `/users/signature/${user._id}`,
         formData,
         {
           headers: {

@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import axios from "axios";
+import api from "../../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -36,10 +36,7 @@ function AdminSettings() {
 
   const handleSave = async () => {
     try {
-      await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${user._id}`,
-        formData
-      );
+      await api.patch(`/users/${user._id}`, formData);
       toast.success("Admin details updated successfully!");
       setIsEditing(false);
     } catch (error) {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../../utils/api";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,9 +33,7 @@ function AdminCategories() {
     setLoading(true);
     setParentError("");
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/v1/categories/parents"
-      );
+      const response = await api.get("/categories/parents");
       setParentCategories(response.data.data);
     } catch (error) {
       setParentError("Error fetching parent categories. Please try again.");
@@ -49,9 +47,7 @@ function AdminCategories() {
     setLoading(true);
     setChildError("");
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/categories/${parentId}`
-      );
+      const response = await api.get(`/categories/${parentId}`);
       setChildCategories(response.data.data);
       setSelectedParentId(parentId);
     } catch (error) {
@@ -75,7 +71,7 @@ function AdminCategories() {
       formData.append("image", selectedImage);
       formData.append("name", categoryName);
 
-      await axios.post("http://127.0.0.1:8000/api/v1/categories", formData, {
+      await api.post("/categories", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -95,7 +91,7 @@ function AdminCategories() {
       formData.append("name", categoryName);
       formData.append("parentCategory", selectedParentId);
 
-      await axios.post("http://127.0.0.1:8000/api/v1/categories", formData, {
+      await api.post("/categories", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -115,7 +111,7 @@ function AdminCategories() {
 
   const handleDeleteCategory = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/v1/categories/${id}`);
+      await api.delete(`/categories/${id}`);
       if (selectedParentId) {
         setChildCategories((prevCategories) =>
           prevCategories.filter((category) => category._id !== id)

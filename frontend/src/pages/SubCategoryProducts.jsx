@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useProduct } from "../contexts/productContext";
 // Import necessary components (adjust imports based on your actual component library or code)
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,9 +24,7 @@ function SubCategoryProducts() {
     const fetchProducts = async () => {
       try {
         setLoading(true); // Set loading to true when fetching starts
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/categoryproducts/${id}`
-        );
+        const response = await api.get(`/product/categoryproducts/${id}`);
         setProducts(response.data.data.products);
         setLoading(false); // Set loading to false after fetching is complete
       } catch (error) {
@@ -64,14 +62,12 @@ function SubCategoryProducts() {
   const handleAdd = async (productId) => {
     if (user) {
       const userId = user._id;
-      await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+      await api.post(`/cart/`, {
         userId,
         productId,
         quantity: 1,
       });
-      const updatedCartResponse = await axios.get(
-        `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-      );
+      const updatedCartResponse = await api.get(`/cart/user/${userId}`);
       setCartItems(updatedCartResponse.data.data.cart.items);
     } else {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -105,19 +101,17 @@ function SubCategoryProducts() {
       try {
         if (newQuantity > 0) {
           console.log(newQuantity);
-          const res = await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+          const res = await api.post(`/cart/`, {
             userId,
             productId,
             quantity: newQuantity,
           });
           console.log(res);
         } else {
-          await axios.delete(`http://127.0.0.1:8000/api/v1/cart/${productId}`);
+          await api.delete(`/cart/${productId}`);
         }
 
-        const updatedCartResponse = await axios.get(
-          `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-        );
+        const updatedCartResponse = await api.get(`/cart/user/${userId}`);
         console.log(updatedCartResponse);
 
         setCartItems(updatedCartResponse.data.data.cart.items);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import PendingOrdersSection from "./OverviewData/PendingOrdersSection";
 import RecentOrdersSection from "./OverviewData/RecentOrdersSection";
 import TopSellingProductsSection from "./OverviewData/TopSellingProductsSection";
@@ -30,9 +30,7 @@ function Overview() {
   useEffect(() => {
     const fetchOverviewData = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/dashboard/${user._id}`
-        );
+        const response = await api.get(`/dashboard/${user._id}`);
         console.log(response.data); // Log the response data
 
         setOverviewData(response.data);

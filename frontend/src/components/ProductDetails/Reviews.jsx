@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../utils/api";
 import ProgressBar from "@ramonak/react-progress-bar";
 import ReviewModal from "./ReviewModal"; // Import the ReviewModal
 import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader
@@ -17,9 +17,7 @@ function Reviews({ productId }) {
     const fetchReviews = async () => {
       setLoading(true); // Set loading to true before fetching
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/review/${productId}`
-        );
+        const response = await api.get(`/review/${productId}`);
 
         const fetchedReviews = response.data.data.reviews;
         setReviews(fetchedReviews);

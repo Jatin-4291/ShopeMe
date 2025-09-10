@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useSwipeable } from "react-swipeable";
 import { useProduct } from "../../contexts/productContext";
 import { useUser } from "../../contexts/userContext";
@@ -23,9 +23,7 @@ function Images({ id }) {
     const getProductById = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/${id}`
-        );
+        const response = await api.get(`/product/${id}`);
         const imagesData = response.data.data.doc.images;
         setImages(imagesData);
 
@@ -50,9 +48,7 @@ function Images({ id }) {
     try {
       setAmazonLoading(true);
       setFlipkartLoading(true);
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/product/scrapProducts/${productName}`
-      );
+      const response = await api.get(`/product/scrapProducts/${productName}`);
       if (response.data.data.productDetailsAmazon) {
         const amazonPrice = response.data.data.productDetailsAmazon.price;
         setProductDetailsAmazon({
@@ -100,14 +96,12 @@ function Images({ id }) {
     if (user) {
       const userId = user._id;
       try {
-        await axios.post(`http://127.0.0.1:8000/api/v1/cart/`, {
+        await api.post(`/cart/`, {
           userId,
           productId: id,
         });
 
-        const updatedCartResponse = await axios.get(
-          `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-        );
+        const updatedCartResponse = await api.get(`/cart/user/${userId}`);
         setCartItems(updatedCartResponse.data.data.cart.items);
       } catch (error) {
         console.error("Error adding item to cart:", error);

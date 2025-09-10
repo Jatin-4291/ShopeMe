@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "../../contexts/userContext";
-import axios from "axios";
-
+import api from "../../utils/api";
 function BankDetails({ onComplete }) {
   const { user, setUser } = useUser();
 
@@ -30,10 +29,9 @@ function BankDetails({ onComplete }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/api/v1/users/${user._id}`,
-        { BankDetails: formData }
-      );
+      const res = await api.patch(`/users/${user._id}`, {
+        BankDetails: formData,
+      });
       setUser(res.data.data.data);
       setSuccessMessage("Bank details updated successfully");
       setErrorMessage(null);

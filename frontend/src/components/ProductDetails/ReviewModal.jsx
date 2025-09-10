@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import ReactStars2 from "react-stars";
 function ReviewModal({ productId, onClose }) {
   const [rating, setRating] = useState(5);
@@ -11,7 +11,7 @@ function ReviewModal({ productId, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://127.0.0.1:8000/api/v1/review/${productId}`, {
+      await api.post(`/review/${productId}`, {
         rating,
         review,
       });

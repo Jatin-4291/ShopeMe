@@ -7,9 +7,8 @@ import { CiUser } from "react-icons/ci";
 import { BsCart3 } from "react-icons/bs";
 import { FaBoxOpen } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
-import axios from "axios";
 import { ClipLoader } from "react-spinners"; // Import the ClipLoader
-
+import api from "../utils/api";
 function Navbar() {
   const [search, setSearch] = useState("");
   const [isHovering, setIsHovering] = useState(false);
@@ -31,9 +30,7 @@ function Navbar() {
       const fetchCart = async () => {
         try {
           const userId = user._id;
-          const updatedCartResponse = await axios.get(
-            `http://127.0.0.1:8000/api/v1/cart/user/${userId}`
-          );
+          const updatedCartResponse = await api.get(`/cart/user/${userId}`);
           setCartId(updatedCartResponse.data.data.cart._id);
           setCartItems(updatedCartResponse.data.data.cart.items);
         } catch (error) {
@@ -63,9 +60,7 @@ function Navbar() {
     if (e.target.value) {
       setLoading(true); // Start loading
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/product/search/${e.target.value}`
-        );
+        const response = await api.get(`/product/search/${e.target.value}`);
         console.log(response.data.data.products);
         setSuggestions(response.data.data.products); // Assuming the API returns products in this structure
       } catch (error) {

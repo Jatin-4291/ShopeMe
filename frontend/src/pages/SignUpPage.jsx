@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -33,17 +33,14 @@ function SignUpPage() {
     } = formData;
 
     try {
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/users/signup",
-        {
-          firstName,
-          lastName,
-          email,
-          mobileNumber,
-          password,
-          passwordConfirm,
-        }
-      );
+      const { data } = await api.post("/users/signup", {
+        firstName,
+        lastName,
+        email,
+        mobileNumber,
+        password,
+        passwordConfirm,
+      });
 
       if (data) {
         console.log(data);
