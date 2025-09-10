@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/userContext";
 import ClipLoader from "react-spinners/ClipLoader"; // Import ClipLoader from react-spinners
-
+console.log("hello");
 function Boards() {
   const [boards, setBoards] = useState([]); // Set initial state as an array
   const [setCurrentIndex] = useState(0); // Add currentIndex state
