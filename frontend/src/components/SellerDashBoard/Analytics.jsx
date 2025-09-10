@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import api from "../../utils/api.js";
+import api from "../../../utils/api";
 import {
   Chart as ChartJS,
   CategoryScale,

@@ -1,4 +1,4 @@
-import api from "../../../utils/api.js";
+import api from "../../../utils/api";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners"; // Import the ClipLoader
 import {
